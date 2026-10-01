@@ -1,4 +1,4 @@
-AutoAttend-Orin: Real-Time Embedded Classroom Attendance System
+Real-Time Embedded Classroom Attendance System
 📌 Executive Summary
 AutoAttend-Orin is an end-to-end, edge-deployed computer vision pipeline designed for automated classroom attendance tracking. Engineered specifically for the NVIDIA Jetson Orin Nano 8GB, the system replaces manual roll calls with continuous multi-face detection, quality filtering, open-set identification, multi-person tracking, and temporal decision fusion.
 Rather than relying on isolated single-frame classifications, AutoAttend-Orin aggregates visual evidence across video frames to eliminate false positives and ensure high-confidence attendance logging under variable lighting, poses, and occlusions.
