@@ -1,0 +1,5 @@
+# downloaded by scripts/download_assets.py - never commit models or raw datasets
+models/
+data/
+__pycache__/
+*.part
