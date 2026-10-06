@@ -1,0 +1,46 @@
+{
+  "data": "LFW 6000 pairs (10 folds), mock SG-1 = YuNet, SG-3 stand-in = SFace",
+  "n_images": 7701,
+  "rows": [
+    {
+      "config": "A0 baseline: 5-pt similarity align",
+      "lfw_acc": 0.9933,
+      "acc_std": 0.0037,
+      "fnmr_at_fmr1": 0.0083,
+      "eer": 0.0087,
+      "sg2_ms_per_face": 0.741
+    },
+    {
+      "config": "A1 no align: tight box crop",
+      "lfw_acc": 0.8738,
+      "acc_std": 0.0131,
+      "fnmr_at_fmr1": 0.3713,
+      "eer": 0.126,
+      "sg2_ms_per_face": 0.567
+    },
+    {
+      "config": "A2 no align: box crop + 20% margin",
+      "lfw_acc": 0.9212,
+      "acc_std": 0.0178,
+      "fnmr_at_fmr1": 0.2137,
+      "eer": 0.082,
+      "sg2_ms_per_face": 0.576
+    },
+    {
+      "config": "A3 no align: box crop + 40% margin",
+      "lfw_acc": 0.8745,
+      "acc_std": 0.013,
+      "fnmr_at_fmr1": 0.38,
+      "eer": 0.1263,
+      "sg2_ms_per_face": 0.571
+    },
+    {
+      "config": "REF OpenCV FaceRecognizerSF.alignCrop",
+      "lfw_acc": 0.9935,
+      "acc_std": 0.0037,
+      "fnmr_at_fmr1": 0.0073,
+      "eer": 0.008,
+      "sg2_ms_per_face": 0.12
+    }
+  ]
+}

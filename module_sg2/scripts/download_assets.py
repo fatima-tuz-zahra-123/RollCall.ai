@@ -14,10 +14,12 @@ ASSETS = [  # (folder, filename, url, sha256 or None)
     (MODELS, "face_detection_yunet_2023mar.onnx", HF.format("face_detection_yunet", "face_detection_yunet_2023mar.onnx"), None),
     (MODELS, "face_recognition_sface_2021dec.onnx", HF.format("face_recognition_sface", "face_recognition_sface_2021dec.onnx"), None),
     (MODELS, "ediffiqa_tiny_jun2024.onnx", HF.format("face_image_quality_assessment_ediffiqa", "ediffiqa_tiny_jun2024.onnx"), None),
-    # LFW: same files + checksums scikit-learn's fetch_lfw_people uses
-    (DATA, "pairs.txt", "https://ndownloader.figshare.com/files/5976006",
+    # LFW: same files + sha256 checksums scikit-learn's fetch_lfw_people uses. scikit-learn's figshare
+    # host now returns 403 (even in a browser), so we pull the byte-identical files from a Hugging Face
+    # mirror; the checksum proves they are the official archive.
+    (DATA, "pairs.txt", "https://huggingface.co/datasets/DerrickUnleashed/LFW/resolve/main/pairs.txt",
      "ea42330c62c92989f9d7c03237ed5d591365e89b3e649747777b70e692dc1592"),
-    (DATA, "lfw.tgz", "https://ndownloader.figshare.com/files/5976018",
+    (DATA, "lfw.tgz", "https://huggingface.co/datasets/DerrickUnleashed/LFW/resolve/main/lfw.tgz",
      "055f7d9c632d7370e6fb4afc7468d40f970c34a80d4c6f50ffec63f5a8d536c0"),
 ]
 
