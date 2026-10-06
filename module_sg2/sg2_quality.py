@@ -103,13 +103,15 @@ def assess_face(frame, face, cfg):
     if out is None:
         return reject("align_failed")
     m.update(image_metrics(out))
-    if g.get("min_blur") is not None and m["blur"] < g["min_blur"]:
-        return reject("blurry")
+    # illumination BEFORE blur: a very dark face also has low Laplacian variance (no contrast), so checking
+    # blur first would mislabel it "blurry" (seen in results/before_after.png, exposure=0.1)
     lo, hi = g.get("brightness_range") or (None, None)
     if lo is not None and not lo <= m["brightness"] <= hi:
         return reject("illumination")
     if g.get("max_sat_frac") is not None and m["sat_frac"] > g["max_sat_frac"]:
         return reject("illumination")
+    if g.get("min_blur") is not None and m["blur"] < g["min_blur"]:
+        return reject("blurry")
     r.update(accept=True, face=out, quality=heuristic_quality(m, cfg))
     return r
 
