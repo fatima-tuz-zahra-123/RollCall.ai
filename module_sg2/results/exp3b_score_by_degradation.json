@@ -1,0 +1,52 @@
+{
+  "data": "1000 genuine LFW pairs, probe degraded, oracle SG-1",
+  "threshold_fmr1_clean": 0.289,
+  "rows": [
+    {
+      "type": "blur=0",
+      "fnmr": 0.01,
+      "mean_heuristic": 0.817,
+      "mean_ediffiqa": 0.684
+    },
+    {
+      "type": "blur=3",
+      "fnmr": 0.026,
+      "mean_heuristic": 0.631,
+      "mean_ediffiqa": 0.354
+    },
+    {
+      "type": "blur=5",
+      "fnmr": 0.277,
+      "mean_heuristic": 0.627,
+      "mean_ediffiqa": 0.173
+    },
+    {
+      "type": "size=24",
+      "fnmr": 0.013,
+      "mean_heuristic": 0.486,
+      "mean_ediffiqa": 0.513
+    },
+    {
+      "type": "size=16",
+      "fnmr": 0.054,
+      "mean_heuristic": 0.442,
+      "mean_ediffiqa": 0.356
+    },
+    {
+      "type": "exposure=0.2",
+      "fnmr": 0.012,
+      "mean_heuristic": 0.464,
+      "mean_ediffiqa": 0.533
+    },
+    {
+      "type": "exposure=2.2",
+      "fnmr": 0.075,
+      "mean_heuristic": 0.718,
+      "mean_ediffiqa": 0.582
+    }
+  ],
+  "corr_with_fnmr": {
+    "mean_heuristic": 0.107,
+    "mean_ediffiqa": -0.74
+  }
+}
