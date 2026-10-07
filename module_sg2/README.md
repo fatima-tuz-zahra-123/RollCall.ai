@@ -19,6 +19,7 @@ pip install opencv-python numpy matplotlib
 ```bash
 python module_sg2/scripts/download_assets.py      # ONNX models (46 MB) + LFW test data (181 MB), sha256-checked, gitignored
 python module_sg2/sg2_quality.py                  # baseline self-check (12 tests, no downloads needed)
+python -m unittest discover -s module_sg2/tests -v  # V1 contract/regression tests
 python module_sg2/experiments/exp1_alignment.py   # EXP-1  ~3 min
 python module_sg2/experiments/exp2_thresholds.py  # EXP-2  ~10 min
 python module_sg2/experiments/exp3_edc.py         # EXP-3  ~6 min
@@ -26,6 +27,8 @@ python module_sg2/experiments/exp3b_score_by_degradation.py  # EXP-3b ~2 min
 python module_sg2/experiments/exp4_config_compare.py         # EXP-4  ~12 min
 python module_sg2/scripts/make_samples.py         # sample I/O for SG-3 + results/before_after.png
 ```
+
+
 Use from code:
 ```python
 from sg2_quality import load_config, process_frame
