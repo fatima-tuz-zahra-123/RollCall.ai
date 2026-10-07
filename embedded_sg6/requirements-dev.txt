@@ -1,0 +1,15 @@
+# Python packages for team LAPTOPS (Windows / macOS / Linux).
+# Use Python 3.10, the same as the Jetson.
+#
+#   python -m venv .venv
+#   .venv\Scripts\activate          (Windows)   |   source .venv/bin/activate   (Mac/Linux)
+#   pip install -r embedded_sg6/requirements-dev.txt
+#
+# Keep versions the same as requirements-jetson.txt.
+
+ultralytics==8.4.173      # YOLOv12 (same version as SG1); installs torch + torchvision
+numpy
+opencv-python
+onnx>=1.16
+onnxslim>=0.1.50
+onnxruntime>=1.18         # CPU. If your laptop has an NVIDIA GPU you can use onnxruntime-gpu instead.
