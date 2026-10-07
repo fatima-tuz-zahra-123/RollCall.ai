@@ -1,0 +1,31 @@
+{
+  "_comment": "SG3 Face Recognition settings. Change values here, not inside the code, so results are reproducible.",
+
+  "data_dir": "data",
+  "models_dir": "models",
+  "gallery_dir": "gallery",
+  "results_dir": "results",
+
+  "detector": {
+    "model": "face_detection_yunet_2023mar.onnx",
+    "score_threshold": 0.7,
+    "nms_threshold": 0.3,
+    "max_side": 640
+  },
+
+  "sface": {
+    "model": "face_recognition_sface_2021dec.onnx",
+    "threshold": 0.363,
+    "sweep": [0.20, 0.25, 0.30, 0.363, 0.40, 0.45, 0.50, 0.55, 0.60]
+  },
+
+  "lbph": {
+    "face_size": 112,
+    "radius": 1,
+    "neighbors": 8,
+    "grid_x": 8,
+    "grid_y": 8,
+    "threshold": 80,
+    "sweep": [40, 50, 60, 70, 80, 90, 100, 110, 120]
+  }
+}

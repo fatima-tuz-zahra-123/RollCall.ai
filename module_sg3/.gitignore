@@ -1,0 +1,8 @@
+# Do NOT commit personal face photos or generated galleries (privacy + course rule)
+data/enroll/*
+data/test/*
+!data/**/.gitkeep
+gallery/
+models/*.onnx
+__pycache__/
+*.pyc
