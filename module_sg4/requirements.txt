@@ -1,0 +1,11 @@
+# Install torch/torchvision first (Colab already has them).
+# facenet-pytorch pins an old torch in its metadata, so install it with --no-deps:
+#   pip install facenet-pytorch --no-deps
+torch
+torchvision
+numpy
+pillow
+matplotlib
+scikit-learn
+requests
+tqdm
