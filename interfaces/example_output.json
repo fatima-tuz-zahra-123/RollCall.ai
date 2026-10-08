@@ -1,0 +1,5 @@
+{
+  "S014": {"student_id": "S014", "status": "Present", "first_seen": 12.5, "last_seen": 410.0,
+           "total_confident_time": 180.5, "decision_confidence": 0.93, "decision_time": 38.0,
+           "evidence_log": ["Present at t=38.0: 6 confident hits in 30s window"]}
+}
