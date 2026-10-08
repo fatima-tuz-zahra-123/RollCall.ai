@@ -1,0 +1,260 @@
+{
+  "data": "LFW folds 1-5 (3000 pairs), probe degraded, REAL YuNet on degraded probe",
+  "threshold_fmr1_clean": 0.289,
+  "summary": {
+    "baseline_v1": {
+      "clean_accept_pct": 93.1,
+      "mean_accept_pct_all_levels": 33.1,
+      "total_harmful_pass_pct": 7.4,
+      "total_safe_drop_pct": 165.87
+    },
+    "week6_candidate": {
+      "clean_accept_pct": 95.5,
+      "mean_accept_pct_all_levels": 49.5,
+      "total_harmful_pass_pct": 12.48,
+      "total_safe_drop_pct": 160.8
+    }
+  },
+  "levels": [
+    {
+      "kind": "blur",
+      "level": "0",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0113,
+      "baseline_v1_accept_pct": 93.1,
+      "baseline_v1_harmful_pass_pct": 1.07,
+      "baseline_v1_safe_drop_pct": 0.07,
+      "week6_candidate_accept_pct": 95.5,
+      "week6_candidate_harmful_pass_pct": 1.07,
+      "week6_candidate_safe_drop_pct": 0.07
+    },
+    {
+      "kind": "blur",
+      "level": "1",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0113,
+      "baseline_v1_accept_pct": 58.6,
+      "baseline_v1_harmful_pass_pct": 0.53,
+      "baseline_v1_safe_drop_pct": 0.6,
+      "week6_candidate_accept_pct": 93.7,
+      "week6_candidate_harmful_pass_pct": 1.07,
+      "week6_candidate_safe_drop_pct": 0.07
+    },
+    {
+      "kind": "blur",
+      "level": "2",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0153,
+      "baseline_v1_accept_pct": 1.7,
+      "baseline_v1_harmful_pass_pct": 0.07,
+      "baseline_v1_safe_drop_pct": 1.47,
+      "week6_candidate_accept_pct": 33.1,
+      "week6_candidate_harmful_pass_pct": 0.47,
+      "week6_candidate_safe_drop_pct": 1.07
+    },
+    {
+      "kind": "blur",
+      "level": "3",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0433,
+      "baseline_v1_accept_pct": 0.1,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 4.33,
+      "week6_candidate_accept_pct": 2.3,
+      "week6_candidate_harmful_pass_pct": 0.0,
+      "week6_candidate_safe_drop_pct": 4.33
+    },
+    {
+      "kind": "blur",
+      "level": "4",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.1353,
+      "baseline_v1_accept_pct": 0.0,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 13.53,
+      "week6_candidate_accept_pct": 0.1,
+      "week6_candidate_harmful_pass_pct": 0.0,
+      "week6_candidate_safe_drop_pct": 13.53
+    },
+    {
+      "kind": "blur",
+      "level": "6",
+      "sg1_missed_pct": 0.07,
+      "fnmr_no_gate_detected": 0.7125,
+      "baseline_v1_accept_pct": 0.0,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 71.2,
+      "week6_candidate_accept_pct": 0.0,
+      "week6_candidate_harmful_pass_pct": 0.0,
+      "week6_candidate_safe_drop_pct": 71.2
+    },
+    {
+      "kind": "size",
+      "level": "None",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0113,
+      "baseline_v1_accept_pct": 93.1,
+      "baseline_v1_harmful_pass_pct": 1.07,
+      "baseline_v1_safe_drop_pct": 0.07,
+      "week6_candidate_accept_pct": 95.5,
+      "week6_candidate_harmful_pass_pct": 1.07,
+      "week6_candidate_safe_drop_pct": 0.07
+    },
+    {
+      "kind": "size",
+      "level": "64",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0087,
+      "baseline_v1_accept_pct": 88.5,
+      "baseline_v1_harmful_pass_pct": 0.73,
+      "baseline_v1_safe_drop_pct": 0.13,
+      "week6_candidate_accept_pct": 95.9,
+      "week6_candidate_harmful_pass_pct": 0.73,
+      "week6_candidate_safe_drop_pct": 0.13
+    },
+    {
+      "kind": "size",
+      "level": "48",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.008,
+      "baseline_v1_accept_pct": 80.5,
+      "baseline_v1_harmful_pass_pct": 0.73,
+      "baseline_v1_safe_drop_pct": 0.07,
+      "week6_candidate_accept_pct": 95.2,
+      "week6_candidate_harmful_pass_pct": 0.73,
+      "week6_candidate_safe_drop_pct": 0.07
+    },
+    {
+      "kind": "size",
+      "level": "32",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0173,
+      "baseline_v1_accept_pct": 0.0,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 1.73,
+      "week6_candidate_accept_pct": 92.8,
+      "week6_candidate_harmful_pass_pct": 1.6,
+      "week6_candidate_safe_drop_pct": 0.13
+    },
+    {
+      "kind": "size",
+      "level": "24",
+      "sg1_missed_pct": 0.1,
+      "fnmr_no_gate_detected": 0.0307,
+      "baseline_v1_accept_pct": 0.0,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 3.07,
+      "week6_candidate_accept_pct": 67.6,
+      "week6_candidate_harmful_pass_pct": 1.33,
+      "week6_candidate_safe_drop_pct": 1.73
+    },
+    {
+      "kind": "size",
+      "level": "16",
+      "sg1_missed_pct": 5.1,
+      "fnmr_no_gate_detected": 0.1636,
+      "baseline_v1_accept_pct": 0.0,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 15.53,
+      "week6_candidate_accept_pct": 0.2,
+      "week6_candidate_harmful_pass_pct": 0.27,
+      "week6_candidate_safe_drop_pct": 15.27
+    },
+    {
+      "kind": "exposure",
+      "level": "1.0",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0113,
+      "baseline_v1_accept_pct": 93.1,
+      "baseline_v1_harmful_pass_pct": 1.07,
+      "baseline_v1_safe_drop_pct": 0.07,
+      "week6_candidate_accept_pct": 95.5,
+      "week6_candidate_harmful_pass_pct": 1.07,
+      "week6_candidate_safe_drop_pct": 0.07
+    },
+    {
+      "kind": "exposure",
+      "level": "0.6",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0107,
+      "baseline_v1_accept_pct": 62.8,
+      "baseline_v1_harmful_pass_pct": 0.53,
+      "baseline_v1_safe_drop_pct": 0.53,
+      "week6_candidate_accept_pct": 92.6,
+      "week6_candidate_harmful_pass_pct": 1.0,
+      "week6_candidate_safe_drop_pct": 0.07
+    },
+    {
+      "kind": "exposure",
+      "level": "0.35",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.012,
+      "baseline_v1_accept_pct": 1.1,
+      "baseline_v1_harmful_pass_pct": 0.07,
+      "baseline_v1_safe_drop_pct": 1.13,
+      "week6_candidate_accept_pct": 59.7,
+      "week6_candidate_harmful_pass_pct": 0.67,
+      "week6_candidate_safe_drop_pct": 0.53
+    },
+    {
+      "kind": "exposure",
+      "level": "0.2",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.0167,
+      "baseline_v1_accept_pct": 0.0,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 1.67,
+      "week6_candidate_accept_pct": 6.5,
+      "week6_candidate_harmful_pass_pct": 0.13,
+      "week6_candidate_safe_drop_pct": 1.53
+    },
+    {
+      "kind": "exposure",
+      "level": "0.1",
+      "sg1_missed_pct": 0.67,
+      "fnmr_no_gate_detected": 0.065,
+      "baseline_v1_accept_pct": 0.0,
+      "baseline_v1_harmful_pass_pct": 0.0,
+      "baseline_v1_safe_drop_pct": 6.47,
+      "week6_candidate_accept_pct": 0.0,
+      "week6_candidate_harmful_pass_pct": 0.0,
+      "week6_candidate_safe_drop_pct": 6.47
+    },
+    {
+      "kind": "exposure",
+      "level": "1.6",
+      "sg1_missed_pct": 0.0,
+      "fnmr_no_gate_detected": 0.02,
+      "baseline_v1_accept_pct": 70.7,
+      "baseline_v1_harmful_pass_pct": 1.0,
+      "baseline_v1_safe_drop_pct": 1.0,
+      "week6_candidate_accept_pct": 51.4,
+      "week6_candidate_harmful_pass_pct": 0.87,
+      "week6_candidate_safe_drop_pct": 1.13
+    },
+    {
+      "kind": "exposure",
+      "level": "2.2",
+      "sg1_missed_pct": 1.93,
+      "fnmr_no_gate_detected": 0.1235,
+      "baseline_v1_accept_pct": 16.5,
+      "baseline_v1_harmful_pass_pct": 0.4,
+      "baseline_v1_safe_drop_pct": 11.73,
+      "week6_candidate_accept_pct": 10.8,
+      "week6_candidate_harmful_pass_pct": 0.2,
+      "week6_candidate_safe_drop_pct": 11.93
+    },
+    {
+      "kind": "exposure",
+      "level": "3.0",
+      "sg1_missed_pct": 15.63,
+      "fnmr_no_gate_detected": 0.3692,
+      "baseline_v1_accept_pct": 2.3,
+      "baseline_v1_harmful_pass_pct": 0.13,
+      "baseline_v1_safe_drop_pct": 31.47,
+      "week6_candidate_accept_pct": 1.4,
+      "week6_candidate_harmful_pass_pct": 0.2,
+      "week6_candidate_safe_drop_pct": 31.4
+    }
+  ]
+}

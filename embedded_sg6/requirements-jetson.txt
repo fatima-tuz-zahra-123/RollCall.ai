@@ -1,0 +1,15 @@
+# Python packages for the JETSON (installed by setup_jetson.sh into ~/venvs/rollcall).
+# Python 3.10 (JetPack 6).
+#
+# Do NOT add torch, torchvision, onnxruntime(-gpu) or tensorrt here:
+# the normal pip versions cannot use the Jetson GPU. setup_jetson.sh installs
+# the special Jetson builds of these separately.
+#
+# Adding a package? Open a PR and tell SG6. Keep versions the same as
+# requirements-dev.txt.
+
+ultralytics==8.4.173      # YOLOv12 (same version as SG1)
+numpy
+opencv-python             # pulled in by ultralytics anyway
+onnx>=1.16
+onnxslim>=0.1.50          # used by ultralytics when exporting to ONNX/TensorRT

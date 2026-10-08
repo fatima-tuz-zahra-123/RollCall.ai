@@ -1,0 +1,15 @@
+{
+  "_note": "Week-6 CANDIDATE, derived from EXP-2 threshold sweeps (results/exp2_thresholds.json) and checked end-to-end in EXP-4. Changes vs baseline_v1: min_blur 50->20, min_face_px 40->24, brightness 50-220 -> 20-180. Alignment, pose 0.30, det-conf, saturation unchanged.",
+  "align": "similarity5",
+  "crop_margin": 0.0,
+  "output_size": 112,
+  "gates": {
+    "min_det_conf": 0.5,
+    "min_face_px": 24,
+    "max_abs_yaw": 0.30,
+    "min_blur": 20.0,
+    "brightness_range": [20, 180],
+    "max_sat_frac": 0.30
+  },
+  "quality_ref": {"blur": 200.0, "face_px": 80, "yaw": 0.30}
+}
