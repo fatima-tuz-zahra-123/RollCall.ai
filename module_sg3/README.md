@@ -7,12 +7,14 @@ ownership: it invokes the actual SG2 quality/alignment code and validates SG3
 evidence with a small mock downstream consumer. Persistent tracking, attendance
 decisions, and Jetson deployment remain separate integration work.
 
-The active classroom gallery now contains **19 students and 21 SFace templates**
-from the newly supplied named dataset. All 93 photos were processed: all 19
-frontal photos and two side views passed SG2; the other 72 failed its unchanged
-pose gate. The default `config.json` loads `gallery_class/`. See the
-[current enrollment report](results/CLASS_ENROLLMENT.md). No students were
-withheld for UNKNOWN testing in this gallery.
+The recorded class enrollment in the original development workspace produced
+**19 students and 21 SFace templates** from the supplied named dataset. All 93
+photos were processed: all 19 photos tagged frontal and two side views passed
+SG2; the other 72 failed its unchanged pose gate. The default `config.json`
+selects `gallery_class/`. See the [enrollment report](results/CLASS_ENROLLMENT.md).
+No students were withheld for UNKNOWN testing in that gallery. These private
+images, galleries and per-face outputs are **not included in a fresh Git clone**;
+the recorded counts do not mean a clone already contains enrolled students.
 
 Read the [initial repository assessment](ASSESSMENT.md),
 [callable V1 contract](../interfaces/sg3_v1_interface.md), and
@@ -20,69 +22,11 @@ Read the [initial repository assessment](ASSESSMENT.md),
 limitations, and the development PC environment. Existing root-level evaluation
 files are historical snapshot results and are not measurements of this dataset.
 
-## Rebuild the complete class gallery
+## Install and download models first
 
-The new archive was extracted without changing original files into
-`../private_data/Cv_Dataset`. From the repository root:
-
-```bash
-python -m module_sg3.prepare_dataset --source "../private_data/Cv_Dataset" --output module_sg3/private_data/cv_prepared --mode enrollment_only --first-image-front
-python -m module_sg3.enroll_dataset --manifest module_sg3/private_data/cv_prepared/manifest.json --gallery-dir module_sg3/gallery_class --output-dir module_sg3/private_runs/class_enrollment --methods sface lbph --require-all-students
-```
-
-The gallery already exists in this workspace. To intentionally regenerate it,
-add `--replace` to the enrollment command; prior gallery/report directories are
-preserved as timestamped backups. New outputs are staged, every saved template
-is verified after reload, and only then published. `--require-all-students`
-refuses to publish a gallery missing any declared student.
-
-`enrollment_only` includes every labeled student and capture session; it does not
-create a test split. Exact duplicates are excluded; perceptual-similarity groups
-are flagged for review rather than automatically removing students with similar
-backgrounds. The first sorted filename per student is tagged frontal using the
-user's capture-order declaration. Specific left/right labels are not inferred.
-
-Private outputs include `gallery_class/sface_gallery.npz`, the LBPH files,
-`student_lookup.private.json`, `roster.private.json`, and
-`provenance.private.json`. Detailed image decisions and a sanitized aggregate
-summary are under `private_runs/class_enrollment/`. The old four-student gallery
-is preserved separately in `gallery/`.
-
-The agreed minimal SG2 packet works directly:
-
-```python
-from module_sg3.sg3_core import load_config, make_recognizer
-from module_sg3.api import RecognitionService
-
-recognizer = make_recognizer("sface", load_config())
-recognizer.load()  # current complete class gallery
-service = RecognitionService(recognizer)
-result = service.recognize_face({
-    "frame_id": 150,
-    "face_id": 1,
-    "aligned_face": face_image,  # 112x112x3 uint8 BGR
-    "quality_pass": True,
-})
-```
-
-`face_id` is preserved alongside the canonical `detection_id`. Missing
-`timestamp`, `bbox` and quality measurements stay `None`/empty; none is invented.
-If SG2 sends a failed-quality packet, it is rejected without running the model.
-If SG2 omits rejected detections, SG3 creates no observation for them. The older
-SG2 `accept`/`face` shape remains supported.
-
-The sections below describe the original dataset's evaluation protocol as well
-as general setup. New experimental runs save galleries inside their own output
-directory's `gallery/`, so experiments do not replace the active class gallery.
-The earlier UNKNOWN test photos overlap this new enrollment dataset, and their
-old FAR does not validate the new gallery.
-
-## Install from the repository root
-
-This workspace already has a prepared `.venv`, downloaded models, private
-galleries and executed outputs. From the parent workspace, enter
-`RollCall.ai-main` and use `.\.venv\Scripts\python.exe` for the commands below.
-The installation steps are for reproducing the environment on another machine.
+Run these commands from the cloned repository root. A fresh clone contains the
+source and reviewed aggregate reports; create its virtual environment and obtain
+the public model weights before running enrollment or recognition.
 
 Use a normal CPython **3.10–3.12** environment. Install one OpenCV distribution:
 `opencv-contrib-python`, which supplies both SFace/YuNet and `cv2.face` for LBPH.
@@ -117,9 +61,9 @@ python -m pip install -r module_sg3/requirements-dev.txt
 `requirements.txt` contains runtime dependencies; `requirements-dev.txt` adds
 pytest. The exact tested Windows resolution is saved in
 [requirements-lock-windows.txt](requirements-lock-windows.txt); it is not an
-ARM/Ubuntu lock file. HEIC decoding uses Pillow and pillow-heif. All recognition and image
-processing run locally in OpenCV; there is no recognition service or dataset
-upload. The downloader below retrieves only public model weights.
+ARM/Ubuntu lock file. HEIC decoding uses Pillow and pillow-heif. All recognition
+and image processing run locally in OpenCV; there is no external recognition
+service or dataset upload. The downloader retrieves only public model weights:
 
 ```bash
 python -m module_sg3.download_models
@@ -131,9 +75,74 @@ verified; partial or mismatched downloads are not accepted. The manifest records
 the documented OpenCV Zoo download sources and content hashes. Models live in
 `module_sg3/models/` and are excluded from Git.
 
-## Prepare the private dataset
+Obtain the authorized private dataset separately before proceeding. The example
+paths below assume originals are outside the checkout in `../private_data/`;
+neither student data nor enrollment templates are downloaded from GitHub.
 
-The supplied dataset ZIP was extracted locally into
+## Rebuild the complete class gallery
+
+In the original development workspace, the named archive was extracted without
+changing original files into `../private_data/Cv_Dataset`. After installation,
+model download and supplying that private folder, run from the repository root:
+
+```bash
+python -m module_sg3.prepare_dataset --source "../private_data/Cv_Dataset" --output module_sg3/private_data/cv_prepared --mode enrollment_only --first-image-front
+python -m module_sg3.enroll_dataset --manifest module_sg3/private_data/cv_prepared/manifest.json --gallery-dir module_sg3/gallery_class --output-dir module_sg3/private_runs/class_enrollment --methods sface lbph --require-all-students
+```
+
+These commands create a private gallery in a fresh clone. If the destination
+gallery or report directory already contains files, intentionally regenerating
+it requires `--replace`; prior directories are preserved as timestamped backups.
+New outputs are staged, every saved template is verified after reload, and only
+then published. `--require-all-students` refuses to publish a gallery missing any
+declared student.
+
+`enrollment_only` includes every labeled student and capture session; it does not
+create a test split. Exact duplicates are excluded; perceptual-similarity groups
+are flagged for review rather than automatically removing students with similar
+backgrounds. The first sorted filename per student is tagged frontal using the
+user's capture-order declaration. Specific left/right labels are not inferred.
+
+Private outputs include `gallery_class/sface_gallery.npz`, the LBPH files,
+`student_lookup.private.json`, `roster.private.json`, and
+`provenance.private.json`. Detailed image decisions and a sanitized aggregate
+summary are under `private_runs/class_enrollment/`. The earlier four-student
+gallery was preserved separately in `gallery/` in the original workspace; it is
+also private and absent from Git.
+
+The agreed minimal SG2 packet works directly:
+
+```python
+from module_sg3.sg3_core import load_config, make_recognizer
+from module_sg3.api import RecognitionService
+
+recognizer = make_recognizer("sface", load_config())
+recognizer.load()  # current complete class gallery
+service = RecognitionService(recognizer)
+result = service.recognize_face({
+    "frame_id": 150,
+    "face_id": 1,
+    "aligned_face": face_image,  # 112x112x3 uint8 BGR
+    "quality_pass": True,
+})
+```
+
+`face_id` is preserved alongside the canonical `detection_id`. Missing
+`timestamp`, `bbox` and quality measurements stay `None`/empty; none is invented.
+If SG2 sends a failed-quality packet, it is rejected without running the model.
+If SG2 omits rejected detections, SG3 creates no observation for them. The older
+SG2 `accept`/`face` shape remains supported.
+
+The sections below describe the original dataset's evaluation protocol.
+New experimental runs save galleries inside their own output
+directory's `gallery/`, so experiments do not replace the active class gallery.
+The earlier UNKNOWN test photos overlap this new enrollment dataset, and their
+old FAR does not validate the new gallery.
+
+## Prepare the original evaluation dataset
+
+This optional comparison uses the earlier archive, separately from complete-class
+enrollment above. The original dataset ZIP was extracted locally into
 `../private_data/Class Dataset` beside the repository. Originals keep their
 names and contents. To repeat the preparation after extraction:
 
@@ -319,24 +328,42 @@ the mock downstream consumer. Test stubs establish control-flow/contract
 behavior; real recognition measurements are in the experiment outputs.
 
 Legacy `enroll.py` and `recognize.py` remain available for their original folder
-layout. The manifest-based experiment above is the reproducible main path for
-this supplied HEIC dataset and SG2-compatible comparison. The historical root
-`evaluate.py` is retained; its outputs should not be mixed with the new run.
+layout. **Legacy enrollment writes directly to the configured gallery**, without
+the manifest enroller's staging, `--replace` guard or backups. With the default
+configuration it can replace files in `gallery_class/`. Use `enroll_dataset.py`
+for class enrollment. If legacy enrollment is required, provide a separate
+`--config` whose `gallery_dir` points to a different private directory.
+
+The manifest-based experiment above is the reproducible path for the original
+HEIC dataset's SG2-compatible comparison. The historical root `evaluate.py` is
+retained; its outputs should not be mixed with the new run.
 
 ## Five-minute midterm sequence
 
-Complete installation, model downloads and preparation before presenting. In
-the first shell, run the experiment and show gallery reload verification,
-recognized enrollment replay, rejection of a whole held-out identity, and the
-actual threshold/timing results. Explain that replay is a functional check and
-that independent known-person accuracy is unavailable.
+Complete installation, model download and the complete-class enrollment commands
+above before presenting. Show roster coverage, saved-template reload checks and
+the recorded [class enrollment results](results/CLASS_ENROLLMENT.md). Use the
+default `gallery_class/` for both the callable service and the bounded CCTV
+command. A replay of an enrolled photo demonstrates the packet/API flow and
+gallery loading; it is not independent recognition accuracy.
 
-In a second shell using the same virtual environment, run the bounded CCTV
-command and open the private AVI locally. Show frame IDs/timestamps, the SG2
-accept/reject counts, and a saved SG3 JSON record. Finish with the V1 contract,
-passing tests, [executed report](results/REPORT.md), and integration blockers.
-Keep the gallery consistent between shells; wait for enrollment to finish
-before loading it in the video process.
+Run the bounded CCTV command with a fresh private output directory, then open the
+AVI locally. Show frame IDs/timestamps, SG2 accept/reject counts and a saved SG3
+JSON record. The video process loads its gallery once, so finish enrollment
+before starting it. CCTV matches remain unverified without identity ground truth.
+
+To demonstrate UNKNOWN against the complete class gallery, use independently
+verified probes of people absent from that gallery. The earlier UNKNOWN photos
+overlap the complete class enrollment data and cannot serve that purpose. If no
+new probes are available, show the earlier held-out-identity experiment only as
+its separately documented historical result, with no new FAR claim.
+
+The optional comparison experiment creates its own `output-dir/gallery/`; the
+default video command continues to load `gallery_class/`. These are different
+enrollment populations. Do not describe a default video run as using the
+experimental gallery. Deliberately testing that gallery instead requires a
+separate video `--config` pointing to it and clear labeling of the selected
+population. Finish with the V1 contract, passing tests and integration blockers.
 
 ## SG4, SG6 and project evidence
 
@@ -356,10 +383,12 @@ with contrib `face`, ONNX DNN, `FaceDetectorYN`, `FaceRecognizerSF`, and video
 decoding support. Verify imports and rerun tests/benchmarks on the device before
 claiming deployment readiness.
 
-The provided repository is a ZIP snapshot without `.git` history. This work
-does not create shared GitHub commits, branch/review history, project-board
-evidence, camera validation, or Jetson readiness evidence. Those shared rubric
-items need the team repository and actual hardware workflow.
+Initial implementation and the recorded experiments started from a ZIP snapshot
+without `.git` history. That local run did not itself establish shared commit,
+review or project-board evidence. The source is now being integrated through
+the team's GitHub branch and review workflow; assess that evidence from the
+actual commits and pull requests. Camera validation and Jetson readiness still
+require the team's hardware workflow and are not established by these PC runs.
 
 Student photographs, originals, label mappings, derived crops, embeddings,
 per-face logs and annotated CCTV are private biometric data. Keep them local and

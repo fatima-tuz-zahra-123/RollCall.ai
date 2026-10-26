@@ -1,0 +1,20 @@
+{
+  "frame_id": 1,
+  "results": [
+    {
+      "accept": true,
+      "reason": null,
+      "quality": 0.7047,
+      "metrics": {
+        "face_px": 103.03133392333984,
+        "det_conf": 0.9265409708023071,
+        "yaw": -0.21683892607688904,
+        "blur": 128.4153168347417,
+        "brightness": 123.09933035714286,
+        "sat_frac": 0.06473214285714286
+      },
+      "face_index": 0,
+      "face": "module_sg2/samples/example_output_face_112.png (112x112x3 uint8 BGR, aligned)"
+    }
+  ]
+}

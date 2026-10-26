@@ -1,5 +1,10 @@
 # Pre-implementation technical assessment — 26 October 2026
 
+This is a historical assessment of the initial ZIP snapshot, before the SG3
+changes. The gaps below describe that starting point, not the current module.
+See the [current README](README.md) and [class enrollment report](results/CLASS_ENROLLMENT.md)
+for the implemented API, tests, reproducible commands and recorded results.
+
 The supplied ZIP was inspected and extracted without changing original sources. It is a source snapshot, not a Git checkout. All Python files, READMEs, interface/configuration files and existing result files were inventoried. `integration/`, SG5 and `evaluation/` contain placeholders.
 
 ## Reusable implementation

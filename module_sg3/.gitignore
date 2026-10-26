@@ -3,6 +3,13 @@ data/enroll/*
 data/test/*
 !data/**/.gitkeep
 gallery/
+gallery_class*/
+gallery*.backup*/
+.gallery*.staging-*/
+private_data/
+private_runs/
+*.npz
 models/*.onnx
+models/*.part
 __pycache__/
 *.pyc

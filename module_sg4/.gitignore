@@ -1,0 +1,5 @@
+results/
+scikit_learn_data/
+__pycache__/
+*.npz
+.ipynb_checkpoints/
