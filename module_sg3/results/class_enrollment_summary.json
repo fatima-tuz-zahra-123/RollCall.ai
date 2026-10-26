@@ -1,0 +1,137 @@
+{
+  "schema_version": "sg3.enrollment.v1",
+  "mode": "enrollment_only",
+  "generated_utc": "2026-10-26T18:12:50.100255+00:00",
+  "counts": {
+    "labeled_students": 19,
+    "students_with_templates": 19,
+    "students_without_templates": 0,
+    "candidate_images": 93,
+    "accepted_images": 21,
+    "templates_per_method": 21,
+    "rejected_images": 72,
+    "excluded_images": 0,
+    "corrupt_or_undecodable_images": 0,
+    "unlabeled_images": 0
+  },
+  "status_counts": {
+    "ACCEPTED_FOR_ENROLLMENT": 21,
+    "QUALITY_REJECTED": 72
+  },
+  "rejection_reasons": {
+    "pose": 72
+  },
+  "excluded_reasons": {},
+  "capture_view_hints": {
+    "front": {
+      "candidate_images": 19,
+      "accepted_images": 19,
+      "rejection_reasons": {},
+      "embedding": {
+        "n": 19,
+        "mean_ms": 16.803352631445467,
+        "median_ms": 13.692800001081196,
+        "p95_ms": 20.821349999823603
+      }
+    },
+    "side_unspecified": {
+      "candidate_images": 74,
+      "accepted_images": 2,
+      "rejection_reasons": {
+        "pose": 72
+      },
+      "embedding": {
+        "n": 2,
+        "mean_ms": 14.552200000252924,
+        "median_ms": 14.552200000252924,
+        "p95_ms": 15.365080000083253
+      }
+    }
+  },
+  "preprocessing": {
+    "detector": "temporary_sg3_yunet",
+    "max_side": 1280,
+    "sg2_config_sha256": "323e0baa67531dff5cc7c7f569466ce6c5db6c6638c9608729ebecfec77964d0",
+    "sg2_gates_modified": false,
+    "preparation_ms_including_decode": 18811.186400000224,
+    "detection": {
+      "n": 93,
+      "mean_ms": 94.49981827965921,
+      "median_ms": 93.51839999908407,
+      "p95_ms": 99.93281999995814
+    },
+    "sg2": {
+      "n": 93,
+      "mean_ms": 0.47684731174329853,
+      "median_ms": 0.1480999999330379,
+      "p95_ms": 1.6860399995493929
+    }
+  },
+  "methods": {
+    "sface": {
+      "students": 19,
+      "templates": 21,
+      "fit_ms": 348.65499999978056,
+      "embedding": {
+        "n": 21,
+        "mean_ms": 16.58895714276046,
+        "median_ms": 13.692800001081196,
+        "p95_ms": 15.455400000064401
+      },
+      "reload_verification_ms": 174.30419999982405,
+      "reload_verified_queries": 21,
+      "gallery_reload_verified": true,
+      "files": {
+        "sface_gallery.npz": {
+          "sha256": "a6e66bad7559347ffcc4b73aa33b487d1da87bc73d69bfb48db57cbc8e44f6e7",
+          "bytes": 14790
+        }
+      }
+    },
+    "lbph": {
+      "students": 19,
+      "templates": 21,
+      "fit_ms": 25.647300000855466,
+      "embedding": {
+        "n": 0,
+        "mean_ms": null,
+        "median_ms": null,
+        "p95_ms": null
+      },
+      "reload_verification_ms": 261.59980000011274,
+      "reload_verified_queries": 21,
+      "gallery_reload_verified": true,
+      "files": {
+        "lbph_model.yml": {
+          "sha256": "d9bb861de937886c0661440af6c50deda6db36bef36e332c3fe9ac46a2598a18",
+          "bytes": 2838370
+        },
+        "lbph_labels.json": {
+          "sha256": "935666a0042dd28448ab639b6328ad70888110b3d11274c2ec3da4b696f378f6",
+          "bytes": 307
+        }
+      }
+    }
+  },
+  "manifest_sha256": "97b04c2d585649065095bbd18c0c9dbed5e4247d4f7eb13562505ab7a56793ac",
+  "model_sha256": {
+    "face_detection_yunet_2023mar.onnx": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+    "face_recognition_sface_2021dec.onnx": "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79"
+  },
+  "wall_seconds_before_publication": 20.05172289999973,
+  "runtime": {
+    "python": "3.12.14",
+    "opencv": "4.11.0",
+    "numpy": "2.5.4",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "opencv_threads": 12
+  },
+  "note": "Enrollment only. No held-out identities, evaluation, accuracy, false-accept/reject estimates, or threshold calibration were performed.",
+  "publication": {
+    "gallery_directory": "gallery_class",
+    "report_directory": "class_enrollment",
+    "previous_destinations_preserved_as_backups": true,
+    "gallery_backup": null,
+    "report_backup": null
+  }
+}

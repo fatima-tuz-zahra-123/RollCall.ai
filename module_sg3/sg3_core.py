@@ -25,12 +25,12 @@ METHODS = ("lbph", "sface")
 
 # ----------------------------------------------------------------- config / files
 def load_config(path=None):
-    path = path or os.path.join(HERE, "config.json")
+    path = os.path.abspath(path or os.path.join(HERE, "config.json"))
     with open(path, "r", encoding="utf-8") as f:
         cfg = json.load(f)
     for k in ("data_dir", "models_dir", "gallery_dir", "results_dir"):
         if not os.path.isabs(cfg[k]):
-            cfg[k] = os.path.join(HERE, cfg[k])
+            cfg[k] = os.path.join(os.path.dirname(path), cfg[k])
     return cfg
 
 
@@ -118,11 +118,16 @@ class SFaceRecognizer:
         else:
             crop = cv2.resize(img, (112, 112))
         feat = self.net.feature(crop).flatten().astype(np.float32)
-        return feat / (np.linalg.norm(feat) + 1e-12)
+        norm = float(np.linalg.norm(feat))
+        if feat.shape != (128,) or not np.isfinite(feat).all() or not np.isfinite(norm) or norm <= 1e-12:
+            raise ValueError("SFace returned an invalid embedding")
+        return feat / norm
 
     # gallery -------------------------------------------------------------
     def fit(self, samples):
         """samples: list of (student_id, img, face_row)."""
+        if not samples:
+            raise ValueError("Cannot enroll an empty sample set")
         g = {}
         for sid, img, row in samples:
             g.setdefault(sid, []).append(self.embed(img, row))
@@ -131,26 +136,45 @@ class SFaceRecognizer:
     def save(self):
         os.makedirs(self.cfg["gallery_dir"], exist_ok=True)
         path = os.path.join(self.cfg["gallery_dir"], "sface_gallery.npz")
-        np.savez(path, **self.gallery)
+        if not self.gallery:
+            raise ValueError("Cannot save an empty gallery")
+        np.savez_compressed(path, **self.gallery)
         return path
 
     def load(self):
         path = os.path.join(self.cfg["gallery_dir"], "sface_gallery.npz")
         if not os.path.isfile(path):
             raise FileNotFoundError(f"{path} not found. Run:  python enroll.py --method sface")
-        data = np.load(path)
-        self.gallery = {k: data[k] for k in data.files}
+        with np.load(path, allow_pickle=False) as data:
+            gallery = {k: data[k].astype(np.float32) for k in data.files}
+        if not gallery:
+            raise ValueError("SFace gallery is empty")
+        for sid, embeddings in gallery.items():
+            if (not sid or sid == "UNKNOWN" or embeddings.ndim != 2 or embeddings.shape[1] != 128
+                    or not len(embeddings) or not np.isfinite(embeddings).all()):
+                raise ValueError("Invalid SFace gallery entry")
+            if not np.allclose(np.linalg.norm(embeddings, axis=1), 1.0, atol=1e-4):
+                raise ValueError("SFace gallery embeddings must be L2 normalized")
+        self.gallery = gallery
 
     # matching ------------------------------------------------------------
     def match(self, img, face_row=None):
         """Returns (best_student_id, best_score). Score = max cosine over that student's photos."""
-        q = self.embed(img, face_row)
+        return self.match_embedding(self.embed(img, face_row))
+
+    def match_embedding(self, q):
+        """Match a normalized vector; permits separate extraction timing."""
+        if not self.gallery:
+            raise ValueError("SFace gallery is empty")
+        q = np.asarray(q, dtype=np.float32)
+        if q.shape != (128,) or not np.isfinite(q).all() or not np.isclose(np.linalg.norm(q), 1, atol=1e-4):
+            raise ValueError("Query must be a finite normalized 128-D embedding")
         best_id, best = None, -1.0
         for sid, embs in self.gallery.items():
             s = float(np.max(embs @ q))
-            if s > best:
+            if best_id is None or s > best:
                 best_id, best = sid, s
-        return best_id, best
+        return best_id, float(np.clip(best, -1, 1))
 
     def accept(self, score, threshold=None):
         t = self.threshold if threshold is None else threshold
@@ -189,6 +213,8 @@ class LBPHRecognizer:
         return cv2.equalizeHist(gray)
 
     def fit(self, samples):
+        if not samples:
+            raise ValueError("Cannot enroll an empty sample set")
         self.labels = sorted({sid for sid, _, _ in samples})
         idx = {sid: i for i, sid in enumerate(self.labels)}
         X = [self.prep(img, row) for _, img, row in samples]
@@ -210,6 +236,8 @@ class LBPHRecognizer:
         self.model.read(path)
         with open(os.path.join(self.cfg["gallery_dir"], "lbph_labels.json")) as f:
             self.labels = json.load(f)
+        if not self.labels or len(set(self.labels)) != len(self.labels) or "UNKNOWN" in self.labels:
+            raise ValueError("Invalid LBPH label list")
 
     def match(self, img, face_row=None):
         label, dist = self.model.predict(self.prep(img, face_row))

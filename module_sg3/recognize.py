@@ -16,7 +16,10 @@ import argparse
 import json
 import os
 
-from sg3_core import METHODS, FaceDetector, list_images, load_config, make_recognizer, recognize_image
+try:
+    from .sg3_core import METHODS, FaceDetector, list_images, load_config, make_recognizer, recognize_image
+except ImportError:
+    from sg3_core import METHODS, FaceDetector, list_images, load_config, make_recognizer, recognize_image
 
 
 def main():
@@ -26,9 +29,10 @@ def main():
     ap.add_argument("--threshold", type=float, default=None, help="override config threshold")
     ap.add_argument("--aligned", action="store_true", help="input is already a cropped face")
     ap.add_argument("--save", default=None, help="optional path to write JSON results")
+    ap.add_argument("--config", default=None)
     args = ap.parse_args()
 
-    cfg = load_config()
+    cfg = load_config(args.config)
     rec = make_recognizer(args.method, cfg)
     rec.load()
     det = None if args.aligned else FaceDetector(cfg)
@@ -36,7 +40,7 @@ def main():
     paths = list_images(args.input) if os.path.isdir(args.input) else [args.input]
     results = [recognize_image(p, rec, det, args.threshold, args.aligned) for p in paths]
 
-    text = json.dumps(results if len(results) > 1 else results[0], indent=2)
+    text = json.dumps(results[0] if len(results) == 1 else results, indent=2)
     print(text)
     if args.save:
         os.makedirs(os.path.dirname(os.path.abspath(args.save)), exist_ok=True)

@@ -1,0 +1,1305 @@
+{
+  "schema_version": "sg3.experiment.v1",
+  "generated_utc": "2026-10-26T05:23:49.950676+00:00",
+  "dataset_audit": {
+    "total_images": 52,
+    "labeled_students": 10,
+    "labeled_images": 23,
+    "unlabeled_images": 29,
+    "corrupt_or_undecodable": 0,
+    "split_counts": {
+      "enrollment": 16,
+      "evaluation_unknown": 5,
+      "excluded": 5,
+      "unlabeled": 26
+    },
+    "resolution_counts": {
+      "3024x4032": 52
+    },
+    "session_independent_known_evaluation_available": false,
+    "near_duplicate_candidate_groups": 3,
+    "all_images_decoded": true,
+    "capture_sessions": [
+      "2026-10-15:camera-3b0d60ee"
+    ],
+    "exact_duplicate_extra_files": 0
+  },
+  "protocol": "Whole held-out identities for UNKNOWN; distinct sessions required for known evaluation. Enrollment replay is training data, not accuracy evidence.",
+  "known_evaluation_available": false,
+  "threshold_policy": "Existing defaults retained. Sweeps describe this small sample; no tuned or calibrated production threshold claimed.",
+  "preprocessing": {
+    "detector": "temporary_sg3_yunet",
+    "max_side": 1280,
+    "sg2_config_sha256": "323e0baa67531dff5cc7c7f569466ce6c5db6c6638c9608729ebecfec77964d0",
+    "same_crops_for_both_methods": true,
+    "subject_selection": "largest face, at least 1.5x runner-up area; otherwise ambiguous/error",
+    "preparation_ms_including_decode": 3844.7243999999046,
+    "detection": {
+      "n": 21,
+      "mean_ms": 87.53455714284948,
+      "median_ms": 86.26770000000761,
+      "p95_ms": 91.38869999969756
+    },
+    "sg2": {
+      "n": 21,
+      "mean_ms": 0.6350238094931965,
+      "median_ms": 0.1667999999881431,
+      "p95_ms": 1.9313000002512126
+    },
+    "sample_status_counts": {
+      "pose": 14,
+      "accepted": 7
+    }
+  },
+  "methods": {
+    "sface": {
+      "score_type": "cosine_similarity",
+      "default_threshold": 0.363,
+      "enrollment": {
+        "students": 4,
+        "templates": 4,
+        "fit_ms": 100.35240000024714,
+        "gallery_bytes": 2931,
+        "gallery_reload_verified": true,
+        "gallery_sha256": "431ed78aa70875f41eec37f0b5ea5f79f013c3e2eb7255e9a232dd276c88d9af"
+      },
+      "evaluation": {
+        "threshold": 0.363,
+        "input_samples": 5,
+        "scored_known": 0,
+        "scored_unknown": 3,
+        "correct_identifications": 0,
+        "false_rejections": 0,
+        "misidentifications": 0,
+        "false_acceptances": 0,
+        "unknown_rejections": 3,
+        "conditional_identification_accuracy": null,
+        "conditional_FAR": 0.0,
+        "conditional_FRR": null,
+        "conditional_misidentification_rate": null,
+        "conditional_unknown_rejection_rate": 1.0,
+        "status_counts": {
+          "UNKNOWN": 3,
+          "QUALITY_REJECTED": 2
+        },
+        "pipeline_acceptance_rate": 0.6
+      },
+      "enrollment_replay": {
+        "threshold": 0.363,
+        "input_samples": 16,
+        "scored_known": 4,
+        "scored_unknown": 0,
+        "correct_identifications": 4,
+        "false_rejections": 0,
+        "misidentifications": 0,
+        "false_acceptances": 0,
+        "unknown_rejections": 0,
+        "conditional_identification_accuracy": 1.0,
+        "conditional_FAR": null,
+        "conditional_FRR": 0.0,
+        "conditional_misidentification_rate": 0.0,
+        "conditional_unknown_rejection_rate": null,
+        "status_counts": {
+          "QUALITY_REJECTED": 12,
+          "RECOGNIZED": 4
+        },
+        "pipeline_acceptance_rate": 0.25
+      },
+      "timing": {
+        "recognition": {
+          "n": 7,
+          "mean_ms": 15.617242857128335,
+          "median_ms": 15.388000000257307,
+          "p95_ms": 16.585220000024492
+        },
+        "embedding": {
+          "n": 7,
+          "mean_ms": 15.41195714272752,
+          "median_ms": 15.208799999982148,
+          "p95_ms": 16.347890000088228
+        },
+        "matching_including_lbph_preprocessing": {
+          "n": 7,
+          "mean_ms": 0.148028571467356,
+          "median_ms": 0.13029999990976648,
+          "p95_ms": 0.1775799998540606
+        },
+        "note": "Warm model, sequential CPU wall time. Face loading/detection/SG2 excluded from recognition timing."
+      },
+      "threshold_sweep": [
+        {
+          "threshold": 0.2,
+          "evaluation": {
+            "threshold": 0.2,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 3,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 1.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 0.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.2,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.25,
+          "evaluation": {
+            "threshold": 0.25,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 2,
+            "unknown_rejections": 1,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.6666666666666666,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 0.3333333333333333,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.25,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.3,
+          "evaluation": {
+            "threshold": 0.3,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 2,
+            "unknown_rejections": 1,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.6666666666666666,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 0.3333333333333333,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.3,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.363,
+          "evaluation": {
+            "threshold": 0.363,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.363,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.4,
+          "evaluation": {
+            "threshold": 0.4,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.4,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.45,
+          "evaluation": {
+            "threshold": 0.45,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.45,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.5,
+          "evaluation": {
+            "threshold": 0.5,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.5,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.55,
+          "evaluation": {
+            "threshold": 0.55,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.55,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 0.6,
+          "evaluation": {
+            "threshold": 0.6,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 0.6,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        }
+      ],
+      "enrollment_pose_replay": {
+        "front": {
+          "threshold": 0.363,
+          "input_samples": 4,
+          "scored_known": 4,
+          "scored_unknown": 0,
+          "correct_identifications": 4,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": 1.0,
+          "conditional_FAR": null,
+          "conditional_FRR": 0.0,
+          "conditional_misidentification_rate": 0.0,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "RECOGNIZED": 4
+          },
+          "pipeline_acceptance_rate": 1.0
+        },
+        "left": {
+          "threshold": 0.363,
+          "input_samples": 1,
+          "scored_known": 0,
+          "scored_unknown": 0,
+          "correct_identifications": 0,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": null,
+          "conditional_FAR": null,
+          "conditional_FRR": null,
+          "conditional_misidentification_rate": null,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "QUALITY_REJECTED": 1
+          },
+          "pipeline_acceptance_rate": 0.0
+        },
+        "right": {
+          "threshold": 0.363,
+          "input_samples": 5,
+          "scored_known": 0,
+          "scored_unknown": 0,
+          "correct_identifications": 0,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": null,
+          "conditional_FAR": null,
+          "conditional_FRR": null,
+          "conditional_misidentification_rate": null,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "QUALITY_REJECTED": 5
+          },
+          "pipeline_acceptance_rate": 0.0
+        },
+        "top": {
+          "threshold": 0.363,
+          "input_samples": 1,
+          "scored_known": 0,
+          "scored_unknown": 0,
+          "correct_identifications": 0,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": null,
+          "conditional_FAR": null,
+          "conditional_FRR": null,
+          "conditional_misidentification_rate": null,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "QUALITY_REJECTED": 1
+          },
+          "pipeline_acceptance_rate": 0.0
+        }
+      },
+      "synthetic_stress": [
+        {
+          "variant": "gaussian_blur_sigma8",
+          "status": "QUALITY_REJECTED",
+          "reason": "blurry",
+          "score": null,
+          "correct_identity": false,
+          "preprocessing_metrics": {
+            "face_px": 208.41651916503906,
+            "det_conf": 0.9261994361877441,
+            "yaw": -0.04281189292669296,
+            "blur": 12.107476370675224,
+            "brightness": 125.99944196428571,
+            "sat_frac": 0.0
+          },
+          "note": "Synthetic transformation of enrollment image; diagnostic only, not evaluation"
+        },
+        {
+          "variant": "darken_0.2",
+          "status": "QUALITY_REJECTED",
+          "reason": "illumination",
+          "score": null,
+          "correct_identity": false,
+          "preprocessing_metrics": {
+            "face_px": 211.93423461914062,
+            "det_conf": 0.9451062083244324,
+            "yaw": -0.062304943799972534,
+            "blur": 75.83992564921475,
+            "brightness": 24.982461734693878,
+            "sat_frac": 0.08346619897959184
+          },
+          "note": "Synthetic transformation of enrollment image; diagnostic only, not evaluation"
+        },
+        {
+          "variant": "lower_face_occlusion",
+          "status": "RECOGNIZED",
+          "reason": null,
+          "score": 0.8173131942749023,
+          "correct_identity": true,
+          "preprocessing_metrics": {
+            "face_px": 218.41566467285156,
+            "det_conf": 0.9243835210800171,
+            "yaw": -0.11110574007034302,
+            "blur": 2223.8813663404817,
+            "brightness": 98.37181122448979,
+            "sat_frac": 0.2811702806122449
+          },
+          "note": "Synthetic transformation of enrollment image; diagnostic only, not evaluation"
+        }
+      ]
+    },
+    "lbph": {
+      "score_type": "lbph_distance",
+      "default_threshold": 80,
+      "enrollment": {
+        "students": 4,
+        "templates": 4,
+        "fit_ms": 8.25329999997848,
+        "gallery_bytes": 542324,
+        "gallery_reload_verified": true,
+        "gallery_sha256": "a54c37d25d70a7d563731bad31126e4823f100e65877319e3f832afe41f615e1"
+      },
+      "evaluation": {
+        "threshold": 80,
+        "input_samples": 5,
+        "scored_known": 0,
+        "scored_unknown": 3,
+        "correct_identifications": 0,
+        "false_rejections": 0,
+        "misidentifications": 0,
+        "false_acceptances": 0,
+        "unknown_rejections": 3,
+        "conditional_identification_accuracy": null,
+        "conditional_FAR": 0.0,
+        "conditional_FRR": null,
+        "conditional_misidentification_rate": null,
+        "conditional_unknown_rejection_rate": 1.0,
+        "status_counts": {
+          "UNKNOWN": 3,
+          "QUALITY_REJECTED": 2
+        },
+        "pipeline_acceptance_rate": 0.6
+      },
+      "enrollment_replay": {
+        "threshold": 80,
+        "input_samples": 16,
+        "scored_known": 4,
+        "scored_unknown": 0,
+        "correct_identifications": 4,
+        "false_rejections": 0,
+        "misidentifications": 0,
+        "false_acceptances": 0,
+        "unknown_rejections": 0,
+        "conditional_identification_accuracy": 1.0,
+        "conditional_FAR": null,
+        "conditional_FRR": 0.0,
+        "conditional_misidentification_rate": 0.0,
+        "conditional_unknown_rejection_rate": null,
+        "status_counts": {
+          "QUALITY_REJECTED": 12,
+          "RECOGNIZED": 4
+        },
+        "pipeline_acceptance_rate": 0.25
+      },
+      "timing": {
+        "recognition": {
+          "n": 7,
+          "mean_ms": 1.8095285714220413,
+          "median_ms": 1.8074999998134444,
+          "p95_ms": 1.8450300000949937
+        },
+        "embedding": {
+          "n": 0,
+          "mean_ms": null,
+          "median_ms": null,
+          "p95_ms": null
+        },
+        "matching_including_lbph_preprocessing": {
+          "n": 7,
+          "mean_ms": 1.7696857143424236,
+          "median_ms": 1.7688000002635818,
+          "p95_ms": 1.8031899998732115
+        },
+        "note": "Warm model, sequential CPU wall time. Face loading/detection/SG2 excluded from recognition timing."
+      },
+      "threshold_sweep": [
+        {
+          "threshold": 40,
+          "evaluation": {
+            "threshold": 40,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 40,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 50,
+          "evaluation": {
+            "threshold": 50,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 50,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 60,
+          "evaluation": {
+            "threshold": 60,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 60,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 70,
+          "evaluation": {
+            "threshold": 70,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 70,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 80,
+          "evaluation": {
+            "threshold": 80,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 3,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 0.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 1.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 80,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 90,
+          "evaluation": {
+            "threshold": 90,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 3,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 1.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 0.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 90,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 100,
+          "evaluation": {
+            "threshold": 100,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 3,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 1.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 0.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 100,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 110,
+          "evaluation": {
+            "threshold": 110,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 3,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 1.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 0.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 110,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        },
+        {
+          "threshold": 120,
+          "evaluation": {
+            "threshold": 120,
+            "input_samples": 5,
+            "scored_known": 0,
+            "scored_unknown": 3,
+            "correct_identifications": 0,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 3,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": null,
+            "conditional_FAR": 1.0,
+            "conditional_FRR": null,
+            "conditional_misidentification_rate": null,
+            "conditional_unknown_rejection_rate": 0.0,
+            "status_counts": {
+              "UNKNOWN": 3,
+              "QUALITY_REJECTED": 2
+            },
+            "pipeline_acceptance_rate": 0.6
+          },
+          "enrollment_replay": {
+            "threshold": 120,
+            "input_samples": 16,
+            "scored_known": 4,
+            "scored_unknown": 0,
+            "correct_identifications": 4,
+            "false_rejections": 0,
+            "misidentifications": 0,
+            "false_acceptances": 0,
+            "unknown_rejections": 0,
+            "conditional_identification_accuracy": 1.0,
+            "conditional_FAR": null,
+            "conditional_FRR": 0.0,
+            "conditional_misidentification_rate": 0.0,
+            "conditional_unknown_rejection_rate": null,
+            "status_counts": {
+              "QUALITY_REJECTED": 12,
+              "RECOGNIZED": 4
+            },
+            "pipeline_acceptance_rate": 0.25
+          }
+        }
+      ],
+      "enrollment_pose_replay": {
+        "front": {
+          "threshold": 80,
+          "input_samples": 4,
+          "scored_known": 4,
+          "scored_unknown": 0,
+          "correct_identifications": 4,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": 1.0,
+          "conditional_FAR": null,
+          "conditional_FRR": 0.0,
+          "conditional_misidentification_rate": 0.0,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "RECOGNIZED": 4
+          },
+          "pipeline_acceptance_rate": 1.0
+        },
+        "left": {
+          "threshold": 80,
+          "input_samples": 1,
+          "scored_known": 0,
+          "scored_unknown": 0,
+          "correct_identifications": 0,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": null,
+          "conditional_FAR": null,
+          "conditional_FRR": null,
+          "conditional_misidentification_rate": null,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "QUALITY_REJECTED": 1
+          },
+          "pipeline_acceptance_rate": 0.0
+        },
+        "right": {
+          "threshold": 80,
+          "input_samples": 5,
+          "scored_known": 0,
+          "scored_unknown": 0,
+          "correct_identifications": 0,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": null,
+          "conditional_FAR": null,
+          "conditional_FRR": null,
+          "conditional_misidentification_rate": null,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "QUALITY_REJECTED": 5
+          },
+          "pipeline_acceptance_rate": 0.0
+        },
+        "top": {
+          "threshold": 80,
+          "input_samples": 1,
+          "scored_known": 0,
+          "scored_unknown": 0,
+          "correct_identifications": 0,
+          "false_rejections": 0,
+          "misidentifications": 0,
+          "false_acceptances": 0,
+          "unknown_rejections": 0,
+          "conditional_identification_accuracy": null,
+          "conditional_FAR": null,
+          "conditional_FRR": null,
+          "conditional_misidentification_rate": null,
+          "conditional_unknown_rejection_rate": null,
+          "status_counts": {
+            "QUALITY_REJECTED": 1
+          },
+          "pipeline_acceptance_rate": 0.0
+        }
+      },
+      "synthetic_stress": [
+        {
+          "variant": "gaussian_blur_sigma8",
+          "status": "QUALITY_REJECTED",
+          "reason": "blurry",
+          "score": null,
+          "correct_identity": false,
+          "preprocessing_metrics": {
+            "face_px": 208.41651916503906,
+            "det_conf": 0.9261994361877441,
+            "yaw": -0.04281189292669296,
+            "blur": 12.107476370675224,
+            "brightness": 125.99944196428571,
+            "sat_frac": 0.0
+          },
+          "note": "Synthetic transformation of enrollment image; diagnostic only, not evaluation"
+        },
+        {
+          "variant": "darken_0.2",
+          "status": "QUALITY_REJECTED",
+          "reason": "illumination",
+          "score": null,
+          "correct_identity": false,
+          "preprocessing_metrics": {
+            "face_px": 211.93423461914062,
+            "det_conf": 0.9451062083244324,
+            "yaw": -0.062304943799972534,
+            "blur": 75.83992564921475,
+            "brightness": 24.982461734693878,
+            "sat_frac": 0.08346619897959184
+          },
+          "note": "Synthetic transformation of enrollment image; diagnostic only, not evaluation"
+        },
+        {
+          "variant": "lower_face_occlusion",
+          "status": "UNKNOWN",
+          "reason": "above_threshold",
+          "score": 107.18472753572966,
+          "correct_identity": false,
+          "preprocessing_metrics": {
+            "face_px": 218.41566467285156,
+            "det_conf": 0.9243835210800171,
+            "yaw": -0.11110574007034302,
+            "blur": 2223.8813663404817,
+            "brightness": 98.37181122448979,
+            "sat_frac": 0.2811702806122449
+          },
+          "note": "Synthetic transformation of enrollment image; diagnostic only, not evaluation"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "No session-independent known-student samples; identification accuracy and FRR cannot be estimated.",
+    "Withheld students represent a small open-set test, not all unknown populations.",
+    "No labeled CCTV identities; CCTV accuracy cannot be measured.",
+    "CPU Windows measurements only; Jetson, full SG4 and attendance untested."
+  ],
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "opencv_threads": 12,
+    "packages": {
+      "opencv-contrib-python": "4.11.0.86",
+      "numpy": "2.5.4",
+      "Pillow": "13.0.0",
+      "pillow-heif": "1.1.1",
+      "matplotlib": "3.10.8"
+    }
+  },
+  "total_wall_seconds": 6.043125500000315,
+  "processed_samples_per_wall_second": 3.4750229827262245
+}

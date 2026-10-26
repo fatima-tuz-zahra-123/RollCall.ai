@@ -21,7 +21,7 @@ import csv
 import os
 import time
 
-from sg3_core import METHODS, FaceDetector, list_images, list_people, load_config, make_recognizer, recognize_image
+from module_sg3.sg3_core import METHODS, FaceDetector, list_images, list_people, load_config, make_recognizer, recognize_image
 
 # ------------------------------------------------------------------ data
 def load_test_set(data_dir):

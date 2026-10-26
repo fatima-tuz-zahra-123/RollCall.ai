@@ -14,7 +14,10 @@ Usage:
 import argparse
 import os
 
-from sg3_core import METHODS, FaceDetector, list_images, list_people, load_config, make_recognizer, read_image
+try:
+    from .sg3_core import METHODS, FaceDetector, list_images, list_people, load_config, make_recognizer, read_image
+except ImportError:
+    from sg3_core import METHODS, FaceDetector, list_images, list_people, load_config, make_recognizer, read_image
 
 
 def collect_samples(enroll_dir, detector, aligned):
@@ -23,7 +26,11 @@ def collect_samples(enroll_dir, detector, aligned):
         imgs = list_images(os.path.join(enroll_dir, sid))
         n_ok = 0
         for p in imgs:
-            img = read_image(p)
+            try:
+                img = read_image(p)
+            except (ValueError, OSError):
+                skipped.append(p)
+                continue
             if aligned:
                 row = None
             else:
@@ -41,9 +48,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--method", default="all", choices=list(METHODS) + ["all"])
     ap.add_argument("--aligned", action="store_true", help="input photos are already cropped faces")
+    ap.add_argument("--config", default=None)
     args = ap.parse_args()
 
-    cfg = load_config()
+    cfg = load_config(args.config)
     enroll_dir = os.path.join(cfg["data_dir"], "enroll")
     if not list_people(enroll_dir):
         raise SystemExit(f"No student folders found in {enroll_dir}\n"
