@@ -28,6 +28,24 @@ python module_sg2/experiments/exp4_config_compare.py         # EXP-4  ~12 min
 python module_sg2/scripts/make_samples.py         # sample I/O for SG-3 + results/before_after.png
 ```
 
+## V1 contract tests
+The new [`tests/test_sg2_quality.py`](tests/test_sg2_quality.py) file adds four
+deterministic regression tests for the SG2 module. These tests use a synthetic
+SG1-style frame and face record to verify that an accepted face is returned in
+the required 112x112x3 `uint8` format, that multiple results preserve input
+order and `face_index`, and that `to_json()` removes image data before the
+metadata is handed to downstream modules. They also check that invalid input,
+low-confidence faces, small faces, and missing landmarks are rejected with
+clear reason codes, while an empty face list produces an empty result. This is
+the individual integration contribution for SG2: it protects the frozen V1
+interface and catches regressions in the SG1-to-SG2-to-SG3 handoff while the
+larger experiments measure recognition and preprocessing performance. Run it
+from the repository root with:
+
+```bash
+python -m unittest discover -s module_sg2/tests -v
+```
+
 
 Use from code:
 ```python
