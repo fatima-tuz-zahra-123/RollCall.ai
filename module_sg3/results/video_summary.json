@@ -1,0 +1,134 @@
+{
+  "mode": "frame_level_recognition",
+  "tracking": false,
+  "attendance_records": false,
+  "accuracy": null,
+  "accuracy_note": "No CCTV identity ground truth supplied; counts and runtime are observations, not accuracy.",
+  "detector": "SG3 temporary YuNet all-faces adapter; SG1 pipeline is not claimed integrated",
+  "preprocessing": "actual module_sg2 quality/alignment implementation",
+  "method": "sface",
+  "source": {
+    "fps": 25.0,
+    "frame_count": 104935,
+    "width": 2560,
+    "height": 1440,
+    "duration_seconds": 4197.4
+  },
+  "sampling": {
+    "requested_start_seconds": 600.0,
+    "requested_duration_seconds": null,
+    "requested_interval_seconds": 300.0,
+    "effective_interval_seconds": 300.0,
+    "maximum_sampled_frames": 6,
+    "sampled_frames": 6,
+    "first_timestamp": 600.0,
+    "last_timestamp": 2100.0
+  },
+  "preview": {
+    "filename": "annotated_samples.avi",
+    "codec": "MJPG",
+    "fps": 2.0,
+    "duration_seconds": 3.0,
+    "time_compressed_sampled_preview": true,
+    "decoded_frames": 6,
+    "decoded_size": [
+      2560,
+      1440
+    ],
+    "verified": true
+  },
+  "counts": {
+    "detected_faces": 215,
+    "sg2_accepted_faces": 18,
+    "sg2_rejected_faces": 197,
+    "statuses": {
+      "RECOGNIZED": 1,
+      "UNKNOWN": 17,
+      "QUALITY_REJECTED": 197,
+      "ERROR": 0
+    },
+    "quality_rejection_reasons": {
+      "too_small": 165,
+      "pose": 31,
+      "illumination": 1
+    }
+  },
+  "timing": {
+    "initialization_ms": 133.31549999975323,
+    "processing_wall_seconds": 2.7864566000002924,
+    "sampled_frames_per_wall_second": 2.153272367493314,
+    "detected_faces_per_wall_second": 77.15892650184375,
+    "stages": {
+      "decode_seek": {
+        "count": 6,
+        "mean_ms": 270.74218333329253,
+        "median_ms": 284.6735999999055,
+        "p95_ms": 319.167324999853,
+        "total_ms": 1624.453099999755
+      },
+      "detection": {
+        "count": 6,
+        "mean_ms": 76.3355499999913,
+        "median_ms": 72.79640000001564,
+        "p95_ms": 95.62177499981317,
+        "total_ms": 458.0132999999478
+      },
+      "preprocessing": {
+        "count": 6,
+        "mean_ms": 2.260900000010224,
+        "median_ms": 2.488399999720059,
+        "p95_ms": 3.0543500002977453,
+        "total_ms": 13.565400000061345
+      },
+      "recognition": {
+        "count": 6,
+        "mean_ms": 48.87363333349034,
+        "median_ms": 51.136550000137504,
+        "p95_ms": 81.23940000018592,
+        "total_ms": 293.241800000942
+      },
+      "annotation": {
+        "count": 6,
+        "mean_ms": 12.622049999966597,
+        "median_ms": 12.648899999931018,
+        "p95_ms": 14.725399999974798,
+        "total_ms": 75.73229999979958
+      },
+      "write": {
+        "count": 6,
+        "mean_ms": 52.641716666585125,
+        "median_ms": 54.359250000061365,
+        "p95_ms": 64.14927499986334,
+        "total_ms": 315.85029999951075
+      },
+      "sample_total": {
+        "count": 6,
+        "mean_ms": 463.8250833332525,
+        "median_ms": 461.6811499997766,
+        "p95_ms": 557.229075000123,
+        "total_ms": 2782.950499999515
+      }
+    },
+    "recognition_per_sg2_accepted_face": {
+      "count": 18,
+      "mean_ms": 15.919588888891667,
+      "median_ms": 14.223399999764297,
+      "p95_ms": 20.213044999877596,
+      "total_ms": 286.55260000005
+    },
+    "note": "CPU wall-clock timings on this PC include seeks/decoding and cold first inference; not Jetson benchmarks."
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "opencv": "4.11.0",
+    "numpy": "2.5.4",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "opencv_threads": 12
+  },
+  "files": {
+    "preview": "annotated_samples.avi",
+    "frame_results": "frame_results.jsonl",
+    "summary": "summary.json"
+  }
+}

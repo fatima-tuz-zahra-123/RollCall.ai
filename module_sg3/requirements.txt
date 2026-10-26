@@ -1,0 +1,5 @@
+opencv-contrib-python==4.11.0.86
+numpy>=1.26,<3
+Pillow>=11.1
+pillow-heif==1.1.1
+matplotlib==3.10.8

@@ -1,0 +1,19 @@
+{
+  "schema_version": "sg3.v1",
+  "status": "UNKNOWN",
+  "method": "sface",
+  "score_type": "cosine_similarity",
+  "threshold": 0.363,
+  "student_id": "UNKNOWN",
+  "best_match": "S001",
+  "score": 0.21,
+  "frame_id": 42,
+  "detection_id": 0,
+  "face_id": 0,
+  "timestamp": 1.4,
+  "bbox": [120.0, 80.0, 54.0, 67.0],
+  "quality": 0.75,
+  "quality_metrics": {"face_px": 54.0, "det_conf": 0.95, "yaw": 0.03, "blur": 150.0, "brightness": 120.0, "sat_frac": 0.01},
+  "reason": "below_threshold",
+  "recognition_ms": 0.0
+}
