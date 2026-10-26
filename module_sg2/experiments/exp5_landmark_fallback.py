@@ -1,7 +1,8 @@
 """EXP-5  landmark fallback (fix for the SG1 -> SG2 blocker)
 
 SG1's YOLOv12n-face only outputs boxes, so V1 rejected every face with no_landmarks.
-With landmark_fallback on, SG2 runs YuNet on the box crop to get the 5 points itself.
+With landmark_fallback on, SG2 runs YuNet on the box ROI to get the 5 points itself
+(roi_landmarks in sg2_quality.py, Fatima's version, which is the one we kept).
 
 To not cheat, the boxes are jittered (random +-8% shift, 0.9-1.15x size) so they look like
 some other detector's boxes, not YuNet's own. Then we compare:
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     # how close are the fallback points to YuNet-on-the-whole-image points?
     errs = []
     for p in paths:
-        got = sg2_quality.find_landmarks(imgs[p], boxes_only[p]["box"], cfg["landmark_fallback"])
+        got, _ = sg2_quality.roi_landmarks(imgs[p], boxes_only[p]["box"], cfg["landmark_fallback"])
         if got is not None:
             ref = np.float32(sg1[p]["landmarks"])
             eye_d = np.linalg.norm(ref[1] - ref[0])

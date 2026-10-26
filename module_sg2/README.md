@@ -59,7 +59,7 @@ out = process_frame(frame_bgr, faces_from_sg1, load_config("module_sg2/config/ba
 - **Out (to SG-3):** one result per face: `{face_index, accept, reason, quality 0–1, metrics, face}`. `face` = **112×112×3 uint8 BGR, aligned**, or `null` if rejected.
 - Reason codes: `bad_input, low_det_conf, too_small, no_landmarks, pose, align_failed, illumination, blurry`.
 - Sample in/out for SG-3: [`interfaces/examples/`](../interfaces/examples/) + [`samples/`](samples/).
-- `landmarks` can now be `null`. SG-1's YOLOv12n-face only gives boxes, so with `landmark_fallback` on we find the points ourselves (see below). `metrics.landmarks_from` says where they came from: `sg1` or `sg2_yunet`.
+- `landmarks` can now be `null`. SG-1's YOLOv12n-face only gives boxes, so with `landmark_fallback` on we find the points ourselves (see below). `metrics.lmk_source` says where they came from: `sg1` or `yunet_roi`.
 
 ## Processing (baseline = `config/baseline_v1.json`)
 validate → det-conf ≥ 0.5 → face ≥ 40 px → landmarks present → |yaw| ≤ 0.30 → **5-point similarity alignment** (`estimateAffinePartial2D` + LMEDS → `warpAffine` 112×112) → illumination (mean 50–220, ≤30% crushed/blown) → blur (Laplacian variance ≥ 50 on the aligned face) → heuristic quality score.
@@ -131,29 +131,30 @@ The real detector is worse than the oracle on degraded images (σ=4 FNMR 13.5% v
 
 The problem: our alignment needs 5 points on the face (eyes, nose, mouth corners), but SG-1 moved to YOLOv12n-face, which only gives a box. So V1 rejected every single face as `no_landmarks` and nothing reached SG-3.
 
-The fix: if a face shows up without points, we crop around the box (with some padding), run YuNet on just that crop, and take the 5 points of the face nearest the box centre. If that face's centre isn't inside the box (e.g. we caught the student next to them), we give up and reject with `no_landmarks` like before. Tiny back-row crops get upscaled to at least 160 px first, otherwise YuNet misses them.
+The fix (`roi_landmarks()` in `sg2_quality.py`): if a face shows up without points, we cut a padded square around the box, resize it to 160 px, run YuNet on just that patch and take the 5 points of the face nearest the centre. If that face's centre isn't inside SG-1's box (we caught the student next to them) we still reject with `no_landmarks`. If SG-1 does send points, those always win. `metrics.lmk_source` says where the points came from (`sg1` / `yunet_roi`).
 
-It's switched on in `config/week6_candidate.json`:
+Fatima and I both wrote a version of this on separate branches. We kept hers (it's the one wired into `integration/sg1_sg2_pipeline.py` and the SG-3 handoff) and re-ran my LFW check against it. Settings live in the config (`sg1_yolov12_v1.json`, same block in `week6_candidate.json`):
 ```json
-"landmark_fallback": "models/face_detection_yunet_2023mar.onnx"
+"landmark_fallback": {"method": "yunet_roi", "model": "models/face_detection_yunet_2023mar.onnx",
+                      "pad": 0.3, "roi_size": 160, "min_score": 0.3}
 ```
-Set it to `null` to get the old behaviour. `baseline_v1.json` is left alone since it's our reference.
+Set it to `null` to get the old V1 behaviour. `baseline_v1.json` is left alone since it's our reference.
 
-We tested it in EXP-5 (`experiments/exp5_landmark_fallback.py`, results in `results/exp5_landmark_fallback.json`). To avoid cheating, the boxes were shifted and resized randomly a bit so they don't look like YuNet's own boxes. Gates off, all 6000 LFW pairs:
+EXP-5 (`experiments/exp5_landmark_fallback.py`, `results/exp5_landmark_fallback.json`): boxes shifted and resized randomly a bit so they don't look like YuNet's own, gates off, all 6000 LFW pairs:
 
 | | faces through | FNMR @ FMR 1% | time / face (PC) |
 |---|---|---|---|
 | SG-1 gives landmarks (week 5) | 100% | 0.83% | 0.8 ms |
-| boxes only, no fallback (V1 today) | **0%** | – | – |
-| boxes only + fallback | **100%** | 0.67% | 3.0 ms |
-| 32 px faces: SG-1 points / fallback | 100% / 100% | 1.60% / 1.40% | |
-| 24 px faces: SG-1 points / fallback | 100% / 100% | 2.73% / 2.80% | |
+| boxes only, no fallback (V1) | **0%** | – | – |
+| boxes only + fallback | **100%** | 0.53% | 2.9 ms |
+| 32 px faces: SG-1 points / fallback | 100% / 100% | 1.60% / 1.20% | |
+| 24 px faces: SG-1 points / fallback | 100% / 100% | 2.73% / 2.53% | |
 
-So recognition is the same either way (the small differences are noise), and the only cost is ~2 ms extra per face. The fallback points sit on average 8% of the eye distance away from YuNet-on-the-full-image points, which clearly doesn't bother SFace.
+Recognition is the same either way (the differences are noise) and the cost is ~2 ms extra per face. The fallback points sit on average 8.5% of the eye distance from YuNet-on-the-full-image points, which doesn't bother SFace.
 
 Things to keep an eye on:
-- On the Jetson this is one extra YuNet run per face (OpenCV Zoo lists ~2.6 ms on Orin CPU). A room with 40 faces would add ~100 ms per frame, so we'll probably only run it once per track (SG-4) instead of every frame. Needs measuring.
-- If SG-1 later switches to a detector that outputs landmarks, nothing changes for them: given points always win, the fallback only kicks in when they're missing.
+- On the Jetson this is one extra YuNet run per face (OpenCV Zoo lists ~2.6 ms on Orin CPU). 40 faces would add ~100 ms per frame, so we may only run it once per track (SG-4) instead of every frame. `scripts/bench_sg2.py` measures it.
+- If SG-1 later switches to a detector with landmarks, nothing changes on their side.
 
 ## Week-6 recommendation
 1. **Alignment ON** (5-point similarity → 112×112): EXP-1, a 26× reduction in missed matches.
@@ -165,6 +166,32 @@ Things to keep an eye on:
    - low light **with sensor noise** (our darkening is noise-free);
    - `max_brightness` 180 vs 200 (180 drops some ×1.6 faces that are still recognisable).
 
+## Week-8 integration with the real SG-1 (YOLOv12n-face)
+SG-1's checkpoint is a box-only `DetectionModel` (no keypoint head), so it sends `landmarks: null`. Under V1 every face would be rejected `no_landmarks`. **V1.1 fix:** when landmarks are missing, SG-2 runs YuNet on the padded SG-1 box ROI and maps the 5 points back to the frame (`landmark_fallback` in [`config/sg1_yolov12_v1.json`](config/sg1_yolov12_v1.json); spec in the interface doc, *V1.1 amendment*).
+
+```bash
+python module_sg2/scripts/download_assets.py --models        # YuNet for the fallback
+pip install -r module_sg1/requirements.txt                    # SG-1's ultralytics
+python integration/sg1_sg2_pipeline.py --source path/to/classroom.jpg     # image / folder / video
+python integration/sg1_sg2_pipeline.py --source 0 --show                  # live webcam
+python integration/sg1_sg2_pipeline.py --mock-sg1 interfaces/examples/sg2_example_input.json  # SG-1 absent
+python -m unittest integration/test_sg1_adapter.py -v
+```
+Outputs go to `runs/sg1_sg2/`: `annotated/` (green = accepted + quality, red = reason, dots = landmarks used), `faces/` (aligned 112×112 = what SG-3 gets), `sheets/` (every face with its decision), `results.jsonl`, `summary.json`.
+
+**First results (real SG-1 → SG-2, `sg1_yolov12_v1.json`, dev PC CPU):**
+
+| Image | SG-1 faces | Fallback found landmarks | Accepted | Rejected |
+|---|---|---|---|---|
+| Class photo, 57 people, 1280×1024, faces 27–42 px | 57 / 57 people | 57 / 57 | 19 | 38 `blurry` |
+| Group still, 610×395, faces ~46 px | 6 | 6 / 6 | 6 | 0 |
+| Single portrait, 512×512 | 1 | 1 / 1 | 1 | 0 |
+
+- Fallback landmark agreement with full-frame YuNet: mean error 9% of eye distance on the class photo (7% group, 6% portrait); 0 misses over 64 faces.
+- SG-2 cost: about 6 ms/face including the fallback (CPU, dev PC). Jetson timing is still pending.
+
+**Finding (blur gate is size-biased):** the 38 `blurry` rejects on the class photo look as sharp as the accepted faces. They are only slightly smaller (median 33 vs 36 px). Laplacian variance is measured after upscaling to 112 px, which smooths small faces: corr(face_px, blur) = +0.58 on this image. `min_blur = 20` came from LFW (~93 px faces) and does not transfer to back-row faces. Measuring blur at native resolution over-corrects (corr −0.53 on the 19 accepted faces), so it is not a drop-in fix. → Week-9 experiment: blur × face-size grid on the EXP-2 bench, then a size-aware blur threshold.
+
 ## Current limitations
 - LFW faces are web photos: large (median 93 px), mostly sharp and frontal. Classroom problems are **simulated** (EXP-2/3), not yet measured on real classroom video.
 - EXP-2/3 use oracle detection (landmarks from the clean image). EXP-4 removes this and shows real detection on degraded images is worse.
@@ -173,7 +200,8 @@ Things to keep an eye on:
 - FNMR differences below ~0.2 points are within noise (3,000 genuine pairs → 0.1% ≈ 3 pairs).
 - The pose gate uses only yaw from 5 landmarks. Pitch and occlusion (masks, hands) have no gate yet.
 - Jetson timing not measured yet (needs SG-6 / the board). OpenCV Zoo publishes Orin Nano numbers for YuNet (2.59 ms CPU) and SFace (20.05 ms CPU).
-- The landmark fallback has only been tested on LFW with a stand-in box detector, not yet on SG-1's real YOLO boxes from a classroom clip.
+- ~~SG-1 has not confirmed it will send landmarks.~~ SG-1's YOLOv12n-face is box-only. Resolved in V1.1 with the YuNet ROI landmark fallback (see *Week-8 integration* below). This adds a second model per face, so its Jetson cost must be measured.
+- The YOLO `det_conf` scale differs from YuNet's, and `min_det_conf = 0.5` was tuned on YuNet. It needs re-tuning on classroom data.
 
 ## Reference implementations
 Ranked screening of 6 candidates: [`docs/reference_screening.md`](docs/reference_screening.md). Primary = OpenCV Zoo (YuNet + 5-pt alignment + eDifFIQA), Backup = InsightFace.
