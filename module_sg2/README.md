@@ -125,7 +125,8 @@ The real detector is worse than the oracle on degraded images (σ=4 FNMR 13.5% v
 - FNMR differences below ~0.2 points are within noise (3,000 genuine pairs → 0.1% ≈ 3 pairs).
 - The pose gate uses only yaw from 5 landmarks. Pitch and occlusion (masks, hands) have no gate yet.
 - Jetson timing not measured yet (needs SG-6 / the board). OpenCV Zoo publishes Orin Nano numbers for YuNet (2.59 ms CPU) and SFace (20.05 ms CPU).
-- SG-1 has not confirmed it will send landmarks. Without them V1 rejects the face (`no_landmarks`).
+- ~~SG-1 has not confirmed it will send landmarks.~~ SG-1's YOLOv12n-face is box-only. Resolved in V1.1 with the YuNet ROI landmark fallback (see *Week-8 integration* below). This adds a second model per face, so its Jetson cost must be measured.
+- The YOLO `det_conf` scale differs from YuNet's, and `min_det_conf = 0.5` was tuned on YuNet. It needs re-tuning on classroom data.
 
 ## Reference implementations
 Ranked screening of 6 candidates: [`docs/reference_screening.md`](docs/reference_screening.md). Primary = OpenCV Zoo (YuNet + 5-pt alignment + eDifFIQA), Backup = InsightFace.

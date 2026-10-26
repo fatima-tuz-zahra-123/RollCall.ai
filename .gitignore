@@ -1,0 +1,4 @@
+# generated outputs (pipeline runs, Ultralytics predictions) - regenerate, never commit
+runs/
+__pycache__/
+*.pyc

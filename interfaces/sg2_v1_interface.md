@@ -27,6 +27,21 @@ Reference implementation: [`module_sg2/sg2_quality.py`](../module_sg2/sg2_qualit
 
 **Request to SG-1:** please include the 5 landmarks. Every candidate detector we looked at (YuNet, RetinaFace, SCRFD) outputs them for free; without them SG-2 must run a second landmark model on every face (slower on the Jetson). If `landmarks` is `null`, SG-2 rejects with `no_landmarks` in V1 (alignment is required — see EXP-1: no alignment costs ~7 points of recognition accuracy).
 
+### V1.1 amendment (Week 8): SG-1 is box-only → `landmarks: null` is now a supported input
+SG-1 selected **YOLOv12n-face** (`module_sg1/weights/yolov12n-face.pt`). Its checkpoint is an Ultralytics `DetectionModel` with a `Detect` head and **no keypoint head**, so it cannot output landmarks. Agreed handling:
+
+| Item | Rule |
+|---|---|
+| SG-1 native output | Ultralytics `boxes.xyxy` `[x1,y1,x2,y2]` (original-frame pixels, letterbox already undone) + `boxes.conf` |
+| Conversion to V1 | [`integration/sg1_adapter.py`](../integration/sg1_adapter.py) `xyxy_to_v1_faces`: → `box: [x, y, w, h]`, clipped to the frame; degenerate boxes dropped; `landmarks: null` |
+| SG-2 behaviour | config [`sg1_yolov12_v1.json`](../module_sg2/config/sg1_yolov12_v1.json) enables `landmark_fallback`: YuNet runs on the box ROI (padded 30 %, resized to 160 px), the detection nearest the ROI centre is kept only if its centre lies inside SG-1's box, its 5 landmarks are mapped back to full-frame pixels, then the normal alignment runs |
+| No face found in the ROI | `accept:false, reason:"no_landmarks"` (unchanged code — SG-1 false positives end here) |
+| Traceability | `metrics.lmk_source` = `"sg1"` / `"yunet_roi"`, `metrics.lmk_score` = YuNet score; result field `landmarks` = the 5 points actually used |
+| Order of gates | `det_conf` and `too_small` run **before** the fallback, so YuNet never runs on faces that would be dropped anyway |
+| If SG-1 later adds landmarks | Sent landmarks always take priority; the fallback simply stops running. No interface change |
+
+Backup (documented, not implemented): SG-1 switches to a YOLO-face *pose* checkpoint with 5 keypoints, which removes the second model. Decision to revisit after Jetson profiling (Lab 10).
+
 ## Output: SG-2 → SG-3 (and metadata for SG-4/SG-5)
 One result **per input face, same order** (`face_index` = position in `faces`).
 ```json
@@ -57,6 +72,6 @@ One result **per input face, same order** (`face_index` = position in `faces`).
 - Thresholds live in a versioned config file (`module_sg2/config/*.json`), not in code.
 
 ## Open points to agree with neighbours
-1. SG-1: landmarks in output (requested above); minimum face size they can detect.
+1. SG-1: ~~landmarks in output~~ resolved by V1.1 (SG-2 fallback); still open: confidence calibration (YOLO `conf` ≠ YuNet score, so `min_det_conf` 0.5 needs re-tuning on classroom data), minimum face size they can detect, and SG-1 emitting V1 directly (move `sg1_adapter.py` into `module_sg1/`).
 2. SG-3: confirm 112×112 ArcFace-template input; who normalises pixels (proposal: SG-3).
 3. SG-4: do you want `quality` to select the best crop per track?

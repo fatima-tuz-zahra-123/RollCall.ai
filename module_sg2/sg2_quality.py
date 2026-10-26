@@ -6,12 +6,18 @@
 Input  faces: [{"box": [x, y, w, h], "det_conf": 0.93, "landmarks": [[x, y] * 5] or None}, ...]
 Output: {"frame_id": 7, "results": [{"face_index", "accept", "reason", "quality", "metrics", "face"}, ...]}
 Never raises on bad input: a bad face becomes accept=False with a reason code.
+
+Landmark fallback (V1.1): SG-1's YOLOv12n-face is a box-only detector (no keypoint head). If a face arrives with
+landmarks = None and the config has "landmark_fallback", SG-2 finds the 5 landmarks itself by running YuNet on
+the padded box ROI, then aligns as usual. metrics["lmk_source"] records where the landmarks came from.
 """
 import json
 from pathlib import Path
 
 import cv2
 import numpy as np
+
+SG2_DIR = Path(__file__).resolve().parent
 
 # ArcFace / InsightFace 5-point template for a 112x112 face (same one OpenCV Zoo + insightface use).
 # Order = image-left eye, image-right eye, nose tip, image-left mouth corner, image-right mouth corner.
@@ -40,6 +46,51 @@ def align(frame, landmarks, size=112):
     if M is None:
         return None
     return cv2.warpAffine(frame, M, (size, size), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
+
+_YUNET_CACHE = {}
+
+
+def _yunet(model_path, min_score):
+    path = Path(model_path)
+    if not path.is_absolute():
+        path = SG2_DIR / path
+    key = (str(path), min_score)
+    if key not in _YUNET_CACHE:
+        if not path.is_file():  # configuration error, not bad input -> fail loudly with the fix
+            raise FileNotFoundError(f"{path} missing: run `python module_sg2/scripts/download_assets.py --models`")
+        _YUNET_CACHE[key] = cv2.FaceDetectorYN.create(str(path), "", (320, 320), min_score, 0.3, 50)
+    return _YUNET_CACHE[key]
+
+
+def roi_landmarks(frame, box, lf):
+    """Box-only upstream detector -> find the 5 landmarks of THIS face with YuNet on a padded, resized ROI.
+
+    The ROI is a square of side max(w, h) * (1 + 2*pad) around the box centre, resized to roi_size px, so a
+    24 px back-row face and a 300 px front-row face both reach YuNet at ~100 px. Of YuNet's detections we keep
+    the one whose centre is nearest the ROI centre, and only if it lies inside the original box (otherwise it
+    is a neighbour's face caught in the padding). Returns (landmarks in full-frame pixels, yunet score) or
+    (None, None).
+    """
+    x, y, w, h = box
+    S = int(lf.get("roi_size", 160))
+    side = max(w, h) * (1 + 2 * lf.get("pad", 0.3))
+    s = S / side
+    tx, ty = S / 2 - s * (x + w / 2), S / 2 - s * (y + h / 2)
+    M = np.float32([[s, 0, tx], [0, s, ty]])
+    roi = cv2.warpAffine(frame, M, (S, S), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+    det = _yunet(lf["model"], lf.get("min_score", 0.3))
+    det.setInputSize((S, S))
+    _, faces = det.detect(roi)
+    if faces is None or len(faces) == 0:
+        return None, None
+    centres = faces[:, :2] + faces[:, 2:4] / 2
+    i = int(np.argmin(np.linalg.norm(centres - S / 2, axis=1)))
+    if np.abs(centres[i] - S / 2).max() > s * max(w, h) / 2:
+        return None, None
+    lmk_roi = faces[i, 4:14].reshape(5, 2)
+    lmk = (lmk_roi - [tx, ty]) / s  # invert the scale+shift back to full-frame pixels
+    return lmk.astype(float).tolist(), float(faces[i, 14])
 
 
 def yaw_proxy(lmk):
@@ -71,7 +122,7 @@ def heuristic_quality(m, cfg):
 
 def assess_face(frame, face, cfg):
     g = cfg["gates"]
-    r = {"accept": False, "reason": None, "quality": 0.0, "metrics": {}, "face": None}
+    r = {"accept": False, "reason": None, "quality": 0.0, "metrics": {}, "face": None, "landmarks": None}
     try:
         box = [float(v) for v in face["box"]]
         assert len(box) == 4 and box[2] > 0 and box[3] > 0 and frame is not None and frame.ndim == 3
@@ -84,16 +135,24 @@ def assess_face(frame, face, cfg):
     m = r["metrics"]
     m["face_px"] = float(min(box[2], box[3]))
     m["det_conf"] = float(face.get("det_conf", 1.0))
-    m["yaw"] = yaw_proxy(lmk) if lmk is not None else None
+    m["lmk_source"] = "sg1" if lmk is not None else None
+    m["yaw"] = None
 
     def reject(reason):
         r["reason"] = reason
         return r
 
+    # cheap gates first, so the landmark fallback never runs on faces we would drop anyway
     if g.get("min_det_conf") is not None and m["det_conf"] < g["min_det_conf"]:
         return reject("low_det_conf")
     if g.get("min_face_px") is not None and m["face_px"] < g["min_face_px"]:
         return reject("too_small")
+    if lmk is None and cfg.get("landmark_fallback") and cfg["align"] == "similarity5":
+        lmk, m["lmk_score"] = roi_landmarks(frame, box, cfg["landmark_fallback"])
+        if lmk is not None:
+            m["lmk_source"] = cfg["landmark_fallback"].get("method", "yunet_roi")
+    if lmk is not None:
+        m["yaw"] = yaw_proxy(lmk)
     if cfg["align"] == "similarity5" and lmk is None:
         return reject("no_landmarks")
     if g.get("max_abs_yaw") is not None and m["yaw"] is not None and abs(m["yaw"]) > g["max_abs_yaw"]:
@@ -113,6 +172,7 @@ def assess_face(frame, face, cfg):
     if g.get("min_blur") is not None and m["blur"] < g["min_blur"]:
         return reject("blurry")
     r.update(accept=True, face=out, quality=heuristic_quality(m, cfg))
+    r["landmarks"] = lmk  # full-frame 5 points actually used for alignment (useful for SG-4 / debugging)
     return r
 
 
