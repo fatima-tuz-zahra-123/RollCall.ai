@@ -59,6 +59,26 @@ class SG2QualityContractTests(unittest.TestCase):
 				self.assertEqual(result["reason"], reason)
 				self.assertIsNone(result["face"])
 
+	def test_sg3_handoff_keeps_only_accepted_faces_with_ids(self):
+		import tempfile
+		from sg2_quality import save_sg3_npz, sg3_items
+		faces = [self.face, {**self.face, "det_conf": 0.1}, self.face]
+		out = process_frame(self.frame, faces, self.config, frame_id=9)
+		items = sg3_items(out, faces)
+		self.assertEqual([it["face_id"] for it in items], ["9_0", "9_2"])
+		self.assertEqual(items[0]["box"], [230.0, 150.0, 180.0, 180.0])
+		with tempfile.TemporaryDirectory() as tmp:
+			n = save_sg3_npz(Path(tmp) / "f.npz", out, faces)
+			d = np.load(Path(tmp) / "f.npz", allow_pickle=False)
+			self.assertEqual(n, 2)
+			self.assertEqual(d["faces"].shape, (2, 112, 112, 3))
+			self.assertEqual(d["faces"].dtype, np.uint8)
+			self.assertEqual(list(d["face_ids"]), ["9_0", "9_2"])
+			self.assertEqual(int(d["frame_id"]), 9)
+			# a frame with no accepted face still gives a valid, empty file
+			save_sg3_npz(Path(tmp) / "e.npz", process_frame(self.frame, [], self.config, 10))
+			self.assertEqual(np.load(Path(tmp) / "e.npz")["faces"].shape, (0, 112, 112, 3))
+
 	def test_empty_input_produces_empty_output(self):
 		self.assertEqual(process_frame(self.frame, [], self.config, frame_id=8), {
 			"frame_id": 8,

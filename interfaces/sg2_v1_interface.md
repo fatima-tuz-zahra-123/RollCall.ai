@@ -65,6 +65,24 @@ One result **per input face, same order** (`face_index` = position in `faces`).
 | `metrics` | raw measurements behind the decision (for debugging + failure analysis) |
 | `face` | **112×112×3, uint8, BGR, aligned** to the ArcFace 5-point template (eyes at ≈(38,52) and (74,52)); `null` when rejected. **No mean/std normalisation is applied** — SG-3 applies its model's own normalisation (e.g. SFace takes this image directly; ArcFace-ONNX models expect `(x−127.5)/127.5`, RGB). |
 
+### SG-3 handoff (agreed with SG-3, Week 8): NumPy arrays
+SG-3 (SFace) takes only **accepted** faces. Two equivalent forms:
+- **In-process (live pipeline):** `sg2_quality.sg3_items(out, sg1_faces)` → list of
+  `{frame_id, face_index, face_id, face, quality, box}`, where `face` is the 112×112×3 uint8 BGR array.
+  SG-3 calls `recognizer.match(item["face"], None)` (no re-detection, no re-alignment).
+- **File (offline testing, CCTV clips):** one `.npz` per frame from `sg2_quality.save_sg3_npz`:
+
+| Key | Shape / type | Meaning |
+|---|---|---|
+| `faces` | `(N,112,112,3)` uint8 | aligned BGR faces, no normalisation |
+| `face_ids` | `(N,)` str | `"<frame_id>_<face_index>"`, unique per detection within a run, **not** a person or track ID (that is SG-4's job) |
+| `face_index` | `(N,)` int32 | position in SG-1's face list for this frame |
+| `quality` | `(N,)` float32 | SG-2 soft quality score 0–1 |
+| `boxes` | `(N,4)` float32 | SG-1 box `[x, y, w, h]` in frame pixels: use this as SG-3's bbox |
+| `frame_id` | scalar | frame number |
+
+`N = 0` is valid (no usable face in that frame). Rejected faces and their reasons are not in the `.npz`; they are in `results.jsonl` (for SG-4/SG-5). Reader: [`integration/sg3_load_example.py`](../integration/sg3_load_example.py).
+
 ## Behaviour rules
 - Never raises on bad input: malformed face → `accept:false, reason:"bad_input"`.
 - `faces: []` → `results: []`.

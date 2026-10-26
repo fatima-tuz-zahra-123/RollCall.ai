@@ -186,6 +186,41 @@ def process_frame(frame, faces, cfg, frame_id=None):
     return {"frame_id": frame_id, "results": results}
 
 
+def sg3_items(out, faces=None):
+    """SG-2 -> SG-3 handoff: one dict per ACCEPTED face, ready for SFace (`recognizer.match(item["face"], None)`).
+
+        face_id  "<frame_id>_<face_index>", unique within a run (NOT a person/track ID - that comes from SG-4)
+        face     112x112x3 uint8 BGR numpy array, aligned to the ArcFace template, no normalisation
+        quality  0-1 soft score; box = SG-1 box [x, y, w, h] in frame pixels (if `faces` is given)
+    """
+    items = []
+    for r in out["results"]:
+        if not r["accept"]:
+            continue
+        i = r["face_index"]
+        items.append({"frame_id": out["frame_id"], "face_index": i, "face_id": f"{out['frame_id']}_{i}",
+                      "face": r["face"], "quality": r["quality"],
+                      "box": [float(v) for v in faces[i]["box"]] if faces else None})
+    return items
+
+
+def save_sg3_npz(path, out, faces=None):
+    """Write the SG-3 handoff for one frame as .npz (load with np.load(path, allow_pickle=False)).
+    Keys: faces (N,112,112,3) uint8 BGR | face_ids (N,) str | face_index (N,) int | quality (N,) float |
+    boxes (N,4) float [x,y,w,h] | frame_id scalar. N = 0 is valid (no accepted face in this frame)."""
+    items = sg3_items(out, faces)
+    size = items[0]["face"].shape[0] if items else 112
+    np.savez_compressed(
+        path,
+        frame_id=np.array(-1 if out["frame_id"] is None else out["frame_id"]),
+        faces=np.stack([it["face"] for it in items]) if items else np.zeros((0, size, size, 3), np.uint8),
+        face_ids=np.array([it["face_id"] for it in items], dtype=str),
+        face_index=np.array([it["face_index"] for it in items], dtype=np.int32),
+        quality=np.array([it["quality"] for it in items], dtype=np.float32),
+        boxes=np.array([it["box"] for it in items], dtype=np.float32).reshape(-1, 4) if faces else np.zeros((len(items), 4), np.float32))
+    return len(items)
+
+
 def to_json(out):
     """Same dict without the image arrays (for logging / handing metadata to SG-4/SG-5)."""
     return {"frame_id": out["frame_id"],

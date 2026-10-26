@@ -9,7 +9,9 @@
 
 Outputs in --out (default runs/sg1_sg2/):
     annotated/   frame with green = accepted (quality), red = rejected (reason), dots = landmarks used
-    faces/       accepted 112x112 aligned faces = exactly what SG-3 receives
+    faces/       accepted 112x112 aligned faces as PNG (for looking at)
+    sg3/         SG-3 handoff per frame (.npz): faces (N,112,112,3) uint8 BGR, face_ids, face_index, quality,
+                 boxes, frame_id - see module_sg2/sg2_quality.py save_sg3_npz and integration/sg3_load_example.py
     sheets/      contact sheet per frame: every detected face, accepted first, with its decision
     results.jsonl  per frame: SG-1 faces (V1) + SG-2 results (no image arrays) + timings
     summary.json   totals, reject-reason histogram, landmark source, ms per frame / per face
@@ -123,7 +125,7 @@ def main():
 
     cfg = sg2_quality.load_config(a.config)
     out = Path(a.out)
-    for d in ("annotated", "faces", "sheets"):
+    for d in ("annotated", "faces", "sheets", "sg3"):
         (out / d).mkdir(parents=True, exist_ok=True)
 
     if a.mock_sg1:
@@ -154,6 +156,7 @@ def main():
                 sources[r["metrics"].get("lmk_source") or "none"] += 1
                 if r["accept"]:
                     cv2.imwrite(str(out / "faces" / f"{name}_f{r['face_index']:03d}.png"), r["face"])
+            sg2_quality.save_sg3_npz(out / "sg3" / f"{name}.npz", res, faces)
             ann = annotate(frame, faces, res["results"])
             cv2.imwrite(str(out / "annotated" / f"{name}.jpg"), ann)
             sheet = contact_sheet(frame, faces, res["results"])
