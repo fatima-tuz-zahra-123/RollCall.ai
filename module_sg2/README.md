@@ -117,6 +117,32 @@ The real detector is worse than the oracle on degraded images (σ=4 FNMR 13.5% v
    - low light **with sensor noise** (our darkening is noise-free);
    - `max_brightness` 180 vs 200 (180 drops some ×1.6 faces that are still recognisable).
 
+## Week-8 integration with the real SG-1 (YOLOv12n-face)
+SG-1's checkpoint is a box-only `DetectionModel` (no keypoint head), so it sends `landmarks: null`. Under V1 every face would be rejected `no_landmarks`. **V1.1 fix:** when landmarks are missing, SG-2 runs YuNet on the padded SG-1 box ROI and maps the 5 points back to the frame (`landmark_fallback` in [`config/sg1_yolov12_v1.json`](config/sg1_yolov12_v1.json); spec in the interface doc, *V1.1 amendment*).
+
+```bash
+python module_sg2/scripts/download_assets.py --models        # YuNet for the fallback
+pip install -r module_sg1/requirements.txt                    # SG-1's ultralytics
+python integration/sg1_sg2_pipeline.py --source path/to/classroom.jpg     # image / folder / video
+python integration/sg1_sg2_pipeline.py --source 0 --show                  # live webcam
+python integration/sg1_sg2_pipeline.py --mock-sg1 interfaces/examples/sg2_example_input.json  # SG-1 absent
+python -m unittest integration/test_sg1_adapter.py -v
+```
+Outputs go to `runs/sg1_sg2/`: `annotated/` (green = accepted + quality, red = reason, dots = landmarks used), `faces/` (aligned 112×112 = what SG-3 gets), `sheets/` (every face with its decision), `results.jsonl`, `summary.json`.
+
+**First results (real SG-1 → SG-2, `sg1_yolov12_v1.json`, dev PC CPU):**
+
+| Image | SG-1 faces | Fallback found landmarks | Accepted | Rejected |
+|---|---|---|---|---|
+| Class photo, 57 people, 1280×1024, faces 27–42 px | 57 / 57 people | 57 / 57 | 19 | 38 `blurry` |
+| Group still, 610×395, faces ~46 px | 6 | 6 / 6 | 6 | 0 |
+| Single portrait, 512×512 | 1 | 1 / 1 | 1 | 0 |
+
+- Fallback landmark agreement with full-frame YuNet: mean error 9% of eye distance on the class photo (7% group, 6% portrait); 0 misses over 64 faces.
+- SG-2 cost: about 6 ms/face including the fallback (CPU, dev PC). Jetson timing is still pending.
+
+**Finding (blur gate is size-biased):** the 38 `blurry` rejects on the class photo look as sharp as the accepted faces. They are only slightly smaller (median 33 vs 36 px). Laplacian variance is measured after upscaling to 112 px, which smooths small faces: corr(face_px, blur) = +0.58 on this image. `min_blur = 20` came from LFW (~93 px faces) and does not transfer to back-row faces. Measuring blur at native resolution over-corrects (corr −0.53 on the 19 accepted faces), so it is not a drop-in fix. → Week-9 experiment: blur × face-size grid on the EXP-2 bench, then a size-aware blur threshold.
+
 ## Current limitations
 - LFW faces are web photos: large (median 93 px), mostly sharp and frontal. Classroom problems are **simulated** (EXP-2/3), not yet measured on real classroom video.
 - EXP-2/3 use oracle detection (landmarks from the clean image). EXP-4 removes this and shows real detection on degraded images is worse.
