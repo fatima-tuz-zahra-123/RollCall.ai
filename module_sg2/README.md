@@ -25,6 +25,7 @@ python module_sg2/experiments/exp2_thresholds.py  # EXP-2  ~10 min
 python module_sg2/experiments/exp3_edc.py         # EXP-3  ~6 min
 python module_sg2/experiments/exp3b_score_by_degradation.py  # EXP-3b ~2 min
 python module_sg2/experiments/exp4_config_compare.py         # EXP-4  ~12 min
+python module_sg2/experiments/exp5_landmark_fallback.py      # EXP-5  ~8 min (landmark fallback)
 python module_sg2/scripts/make_samples.py         # sample I/O for SG-3 + results/before_after.png
 ```
 
@@ -58,6 +59,7 @@ out = process_frame(frame_bgr, faces_from_sg1, load_config("module_sg2/config/ba
 - **Out (to SG-3):** one result per face: `{face_index, accept, reason, quality 0–1, metrics, face}`. `face` = **112×112×3 uint8 BGR, aligned**, or `null` if rejected.
 - Reason codes: `bad_input, low_det_conf, too_small, no_landmarks, pose, align_failed, illumination, blurry`.
 - Sample in/out for SG-3: [`interfaces/examples/`](../interfaces/examples/) + [`samples/`](samples/).
+- `landmarks` can now be `null`. SG-1's YOLOv12n-face only gives boxes, so with `landmark_fallback` on we find the points ourselves (see below). `metrics.landmarks_from` says where they came from: `sg1` or `sg2_yunet`.
 
 ## Processing (baseline = `config/baseline_v1.json`)
 validate → det-conf ≥ 0.5 → face ≥ 40 px → landmarks present → |yaw| ≤ 0.30 → **5-point similarity alignment** (`estimateAffinePartial2D` + LMEDS → `warpAffine` 112×112) → illumination (mean 50–220, ≤30% crushed/blown) → blur (Laplacian variance ≥ 50 on the aligned face) → heuristic quality score.
@@ -125,6 +127,34 @@ YuNet is re-run on every degraded image (no oracle). Same 3,000 pairs, same 19 l
 
 The real detector is worse than the oracle on degraded images (σ=4 FNMR 13.5% vs 9.8%; 24 px 3.1% vs 1.7%; at ×3 exposure 15.6% of faces are not even detected).
 
+## Landmark fallback (fix for the SG1 → SG2 blocker)
+
+The problem: our alignment needs 5 points on the face (eyes, nose, mouth corners), but SG-1 moved to YOLOv12n-face, which only gives a box. So V1 rejected every single face as `no_landmarks` and nothing reached SG-3.
+
+The fix: if a face shows up without points, we crop around the box (with some padding), run YuNet on just that crop, and take the 5 points of the face nearest the box centre. If that face's centre isn't inside the box (e.g. we caught the student next to them), we give up and reject with `no_landmarks` like before. Tiny back-row crops get upscaled to at least 160 px first, otherwise YuNet misses them.
+
+It's switched on in `config/week6_candidate.json`:
+```json
+"landmark_fallback": "models/face_detection_yunet_2023mar.onnx"
+```
+Set it to `null` to get the old behaviour. `baseline_v1.json` is left alone since it's our reference.
+
+We tested it in EXP-5 (`experiments/exp5_landmark_fallback.py`, results in `results/exp5_landmark_fallback.json`). To avoid cheating, the boxes were shifted and resized randomly a bit so they don't look like YuNet's own boxes. Gates off, all 6000 LFW pairs:
+
+| | faces through | FNMR @ FMR 1% | time / face (PC) |
+|---|---|---|---|
+| SG-1 gives landmarks (week 5) | 100% | 0.83% | 0.8 ms |
+| boxes only, no fallback (V1 today) | **0%** | – | – |
+| boxes only + fallback | **100%** | 0.67% | 3.0 ms |
+| 32 px faces: SG-1 points / fallback | 100% / 100% | 1.60% / 1.40% | |
+| 24 px faces: SG-1 points / fallback | 100% / 100% | 2.73% / 2.80% | |
+
+So recognition is the same either way (the small differences are noise), and the only cost is ~2 ms extra per face. The fallback points sit on average 8% of the eye distance away from YuNet-on-the-full-image points, which clearly doesn't bother SFace.
+
+Things to keep an eye on:
+- On the Jetson this is one extra YuNet run per face (OpenCV Zoo lists ~2.6 ms on Orin CPU). A room with 40 faces would add ~100 ms per frame, so we'll probably only run it once per track (SG-4) instead of every frame. Needs measuring.
+- If SG-1 later switches to a detector that outputs landmarks, nothing changes for them: given points always win, the fallback only kicks in when they're missing.
+
 ## Week-6 recommendation
 1. **Alignment ON** (5-point similarity → 112×112): EXP-1, a 26× reduction in missed matches.
 2. **Thresholds = `config/week6_candidate.json`** (blur 20, size 24 px, brightness 20–180, yaw 0.30): EXP-2 + EXP-4, about 50% more usable faces at nearly the same reliability. Back-row students stop being permanently rejected.
@@ -143,7 +173,7 @@ The real detector is worse than the oracle on degraded images (σ=4 FNMR 13.5% v
 - FNMR differences below ~0.2 points are within noise (3,000 genuine pairs → 0.1% ≈ 3 pairs).
 - The pose gate uses only yaw from 5 landmarks. Pitch and occlusion (masks, hands) have no gate yet.
 - Jetson timing not measured yet (needs SG-6 / the board). OpenCV Zoo publishes Orin Nano numbers for YuNet (2.59 ms CPU) and SFace (20.05 ms CPU).
-- SG-1 has not confirmed it will send landmarks. Without them V1 rejects the face (`no_landmarks`).
+- The landmark fallback has only been tested on LFW with a stand-in box detector, not yet on SG-1's real YOLO boxes from a classroom clip.
 
 ## Reference implementations
 Ranked screening of 6 candidates: [`docs/reference_screening.md`](docs/reference_screening.md). Primary = OpenCV Zoo (YuNet + 5-pt alignment + eDifFIQA), Backup = InsightFace.

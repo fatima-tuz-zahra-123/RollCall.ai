@@ -25,7 +25,7 @@ Reference implementation: [`module_sg2/sg2_quality.py`](../module_sg2/sg2_qualit
 ```
 + the frame itself (`image`) passed alongside (in-process reference, not copied/serialised).
 
-**Request to SG-1:** please include the 5 landmarks. Every candidate detector we looked at (YuNet, RetinaFace, SCRFD) outputs them for free; without them SG-2 must run a second landmark model on every face (slower on the Jetson). If `landmarks` is `null`, SG-2 rejects with `no_landmarks` in V1 (alignment is required — see EXP-1: no alignment costs ~7 points of recognition accuracy).
+**Landmarks from SG-1 are optional now.** SG-1's YOLOv12n-face gives boxes only, so `landmarks` may be `null`. With `landmark_fallback` set in the SG-2 config (it is in `week6_candidate.json`), SG-2 finds the 5 points itself by running YuNet on the box crop. If SG-1 does send points, those are used and the fallback is skipped. `no_landmarks` is now only returned when the fallback can't find a face inside the box (or when the fallback is switched off). Details and numbers: EXP-5 in `module_sg2/README.md`.
 
 ## Output: SG-2 → SG-3 (and metadata for SG-4/SG-5)
 One result **per input face, same order** (`face_index` = position in `faces`).
@@ -37,7 +37,7 @@ One result **per input face, same order** (`face_index` = position in `faces`).
      "accept": true,
      "reason": null,
      "quality": 0.81,
-     "metrics": {"face_px": 92.8, "det_conf": 0.93, "yaw": 0.04, "blur": 412.0, "brightness": 118.3, "sat_frac": 0.01},
+     "metrics": {"face_px": 92.8, "det_conf": 0.93, "landmarks_from": "sg1", "yaw": 0.04, "blur": 412.0, "brightness": 118.3, "sat_frac": 0.01},
      "face": "<112x112x3 uint8 BGR, aligned>"}
   ]
 }
