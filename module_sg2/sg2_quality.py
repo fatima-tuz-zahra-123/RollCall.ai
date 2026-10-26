@@ -52,6 +52,45 @@ def yaw_proxy(lmk):
     return float(np.dot(lmk[2] - (lmk[0] + lmk[1]) / 2, eye_vec / eye_d) / eye_d)
 
 
+_detectors = {}
+
+
+def find_landmarks(frame, box, model):
+    """Landmark fallback for boxes that come without the 5 points.
+    Runs YuNet on a padded crop around the box and keeps the face nearest the box centre.
+    Returns 5x2 points in full-frame coords, or None if no face centre falls inside the box."""
+    path = Path(model)
+    if not path.is_absolute():
+        path = Path(__file__).parent / path
+    if path not in _detectors:
+        if not path.exists():
+            raise FileNotFoundError(f"{path} missing, run scripts/download_assets.py --models")
+        _detectors[path] = cv2.FaceDetectorYN.create(str(path), "", (320, 320), 0.5, 0.3, 20)
+    det = _detectors[path]
+
+    x, y, w, h = box
+    pad = 0.3 * max(w, h)  # YuNet needs a bit of context around the face
+    x0, y0 = max(int(x - pad), 0), max(int(y - pad), 0)
+    x1, y1 = min(int(x + w + pad), frame.shape[1]), min(int(y + h + pad), frame.shape[0])
+    crop = frame[y0:y1, x0:x1]
+    if crop.size == 0:
+        return None
+    s = max(1.0, 160 / min(crop.shape[:2]))  # small back-row crops get upscaled first
+    if s > 1:
+        crop = cv2.resize(crop, None, fx=s, fy=s, interpolation=cv2.INTER_LINEAR)
+    det.setInputSize((crop.shape[1], crop.shape[0]))
+    _, faces = det.detect(crop)
+    if faces is None:
+        return None
+
+    cx, cy = (x + w / 2 - x0) * s, (y + h / 2 - y0) * s
+    f = min(faces, key=lambda f: (f[0] + f[2] / 2 - cx) ** 2 + (f[1] + f[3] / 2 - cy) ** 2)
+    fx, fy = (f[0] + f[2] / 2) / s + x0, (f[1] + f[3] / 2) / s + y0
+    if not (x <= fx <= x + w and y <= fy <= y + h):  # that's the neighbour, not our face
+        return None
+    return (f[4:14].reshape(5, 2) / s + [x0, y0]).tolist()
+
+
 def image_metrics(face112):
     g = cv2.cvtColor(face112, cv2.COLOR_BGR2GRAY)
     return {"blur": float(cv2.Laplacian(g, cv2.CV_64F).var()),     # sharpness: variance of 2nd derivative
@@ -84,7 +123,8 @@ def assess_face(frame, face, cfg):
     m = r["metrics"]
     m["face_px"] = float(min(box[2], box[3]))
     m["det_conf"] = float(face.get("det_conf", 1.0))
-    m["yaw"] = yaw_proxy(lmk) if lmk is not None else None
+    m["yaw"] = None
+    m["landmarks_from"] = "sg1" if lmk is not None else None
 
     def reject(reason):
         r["reason"] = reason
@@ -94,6 +134,13 @@ def assess_face(frame, face, cfg):
         return reject("low_det_conf")
     if g.get("min_face_px") is not None and m["face_px"] < g["min_face_px"]:
         return reject("too_small")
+    # SG1's YOLO only gives boxes, so if the points are missing we find them ourselves
+    if lmk is None and cfg["align"] == "similarity5" and cfg.get("landmark_fallback"):
+        lmk = find_landmarks(frame, box, cfg["landmark_fallback"])
+        if lmk is not None:
+            m["landmarks_from"] = "sg2_yunet"
+    if lmk is not None:
+        m["yaw"] = yaw_proxy(lmk)
     if cfg["align"] == "similarity5" and lmk is None:
         return reject("no_landmarks")
     if g.get("max_abs_yaw") is not None and m["yaw"] is not None and abs(m["yaw"]) > g["max_abs_yaw"]:
