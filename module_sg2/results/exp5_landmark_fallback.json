@@ -1,0 +1,57 @@
+{
+  "data": "LFW 6000 pairs, SFace stand-in for SG3, gates off, jittered boxes",
+  "A_sg1_landmarks": {
+    "faces_ok_pct": 100.0,
+    "pairs_scored": 6000,
+    "fnmr_at_fmr1": 0.0083,
+    "eer": 0.0087,
+    "ms_per_face": 0.79
+  },
+  "B_boxes_only_no_fallback": {
+    "faces_ok_pct": 0.0,
+    "pairs_scored": 0
+  },
+  "C_boxes_only_fallback": {
+    "faces_ok_pct": 100.0,
+    "pairs_scored": 6000,
+    "fnmr_at_fmr1": 0.0067,
+    "eer": 0.0073,
+    "ms_per_face": 3.03
+  },
+  "landmark_error_vs_full_image": {
+    "mean_pct_of_eye_distance": 8.1,
+    "p95_pct": 14.88
+  },
+  "small_32px": {
+    "sg1_landmarks": {
+      "faces_ok_pct": 100.0,
+      "pairs_scored": 3000,
+      "fnmr_at_fmr1": 0.016,
+      "eer": 0.0133,
+      "ms_per_face": 0.79
+    },
+    "fallback": {
+      "faces_ok_pct": 100.0,
+      "pairs_scored": 3000,
+      "fnmr_at_fmr1": 0.014,
+      "eer": 0.012,
+      "ms_per_face": 2.7
+    }
+  },
+  "small_24px": {
+    "sg1_landmarks": {
+      "faces_ok_pct": 100.0,
+      "pairs_scored": 3000,
+      "fnmr_at_fmr1": 0.0273,
+      "eer": 0.016,
+      "ms_per_face": 0.84
+    },
+    "fallback": {
+      "faces_ok_pct": 100.0,
+      "pairs_scored": 3000,
+      "fnmr_at_fmr1": 0.028,
+      "eer": 0.0227,
+      "ms_per_face": 2.73
+    }
+  }
+}
