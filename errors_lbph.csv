@@ -1,0 +1,3 @@
+image,true_id,enrolled,best_match,score,face_found,time_ms,predicted,error_type,threshold
+test/known/478087/George2.jpg,478087,True,468915,83.306,True,75.3,468915,misidentified,90
+test/known/478087/george1.jpg,478087,True,468915,82.1213,True,44.7,468915,misidentified,90

@@ -1,0 +1,10 @@
+image,true_id,enrolled,best_match,score,face_found,time_ms
+test/known/468915/imran1.jpg,468915,True,468915,80.8376,True,57.9
+test/known/468915/imran2.jpg,468915,True,468915,83.5055,True,76.8
+test/known/468915/imran3.jpg,468915,True,468915,88.7131,True,42.8
+test/known/478087/George2.jpg,478087,True,468915,83.306,True,75.3
+test/known/478087/George3.jpg,478087,True,478087,88.0722,True,65.1
+test/known/478087/george1.jpg,478087,True,468915,82.1213,True,44.7
+test/unknown/nawaz.jpg,UNKNOWN,False,468915,102.3692,True,58.9
+test/unknown/student1.jpg,UNKNOWN,False,468915,105.8665,True,66.7
+test/unknown/student2.jpg,UNKNOWN,False,468915,98.3793,True,62.0
