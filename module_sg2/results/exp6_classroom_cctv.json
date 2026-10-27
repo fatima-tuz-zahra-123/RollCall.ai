@@ -291,5 +291,22 @@
         "fnmr_kept": 0.3384
       }
     }
+  },
+  "transfer_cctv_v2": {
+    "no_gates": {
+      "faces_accepted_pct": 100.0,
+      "genuine_pairs": 89981,
+      "fnmr_kept": 0.479
+    },
+    "v1.1": {
+      "faces_accepted_pct": 45.6,
+      "genuine_pairs": 24455,
+      "fnmr_kept": 0.4213
+    },
+    "cctv_v2": {
+      "faces_accepted_pct": 61.8,
+      "genuine_pairs": 42855,
+      "fnmr_kept": 0.3447
+    }
   }
 }

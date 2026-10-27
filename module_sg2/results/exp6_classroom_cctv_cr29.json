@@ -1,0 +1,312 @@
+{
+  "data": "CR #28 CCTV 2560x1440, real SG-1 YOLOv12n-face (imgsz 1280) + SG-2 V1.1 fallback, SFace stand-in for SG-3; seat-consistency pseudo labels",
+  "faces_from_sg1": 14147,
+  "faces_aligned": 13784,
+  "no_landmarks": 363,
+  "frames": 552,
+  "genuine_pairs": 54588,
+  "impostor_pairs": 22080,
+  "threshold_fmr1": 0.4786,
+  "fnmr_all_faces": 0.5855,
+  "eer_all_faces": 0.2197,
+  "fnmr_by_pair_max_yaw": [
+    {
+      "max_abs_yaw": "0-0.15",
+      "genuine_pairs": 1455,
+      "fnmr": 0.5821
+    },
+    {
+      "max_abs_yaw": "0.15-0.3",
+      "genuine_pairs": 6252,
+      "fnmr": 0.5726
+    },
+    {
+      "max_abs_yaw": "0.3-0.45",
+      "genuine_pairs": 9128,
+      "fnmr": 0.5983
+    },
+    {
+      "max_abs_yaw": "0.45-0.6",
+      "genuine_pairs": 8907,
+      "fnmr": 0.5888
+    },
+    {
+      "max_abs_yaw": "0.6-0.8",
+      "genuine_pairs": 9433,
+      "fnmr": 0.5508
+    },
+    {
+      "max_abs_yaw": "0.8-9",
+      "genuine_pairs": 19254,
+      "fnmr": 0.5988
+    }
+  ],
+  "fnmr_by_pair_min_face_px": [
+    {
+      "min_face_px": "0-16",
+      "genuine_pairs": 0,
+      "fnmr": null
+    },
+    {
+      "min_face_px": "16-20",
+      "genuine_pairs": 150,
+      "fnmr": 0.76
+    },
+    {
+      "min_face_px": "20-24",
+      "genuine_pairs": 2595,
+      "fnmr": 0.6439
+    },
+    {
+      "min_face_px": "24-28",
+      "genuine_pairs": 7977,
+      "fnmr": 0.5665
+    },
+    {
+      "min_face_px": "28-32",
+      "genuine_pairs": 9546,
+      "fnmr": 0.6075
+    },
+    {
+      "min_face_px": "32-40",
+      "genuine_pairs": 17741,
+      "fnmr": 0.6088
+    },
+    {
+      "min_face_px": "40-999",
+      "genuine_pairs": 16579,
+      "fnmr": 0.5462
+    }
+  ],
+  "fnmr_by_pair_max_pitch_dev": [
+    {
+      "max_pitch_dev": "0-0.1",
+      "genuine_pairs": 42489,
+      "fnmr": 0.5354
+    },
+    {
+      "max_pitch_dev": "0.1-0.2",
+      "genuine_pairs": 10092,
+      "fnmr": 0.7566
+    },
+    {
+      "max_pitch_dev": "0.2-0.3",
+      "genuine_pairs": 1511,
+      "fnmr": 0.822
+    },
+    {
+      "max_pitch_dev": "0.3-0.4",
+      "genuine_pairs": 195,
+      "fnmr": 0.6974
+    },
+    {
+      "max_pitch_dev": "0.4-9",
+      "genuine_pairs": 301,
+      "fnmr": 0.6512
+    }
+  ],
+  "fnmr_by_pair_min_blur": [
+    {
+      "min_blur": "0-10",
+      "genuine_pairs": 320,
+      "fnmr": 0.9031
+    },
+    {
+      "min_blur": "10-20",
+      "genuine_pairs": 833,
+      "fnmr": 0.8199
+    },
+    {
+      "min_blur": "20-35",
+      "genuine_pairs": 1631,
+      "fnmr": 0.8541
+    },
+    {
+      "min_blur": "35-50",
+      "genuine_pairs": 2381,
+      "fnmr": 0.8026
+    },
+    {
+      "min_blur": "50-100",
+      "genuine_pairs": 14026,
+      "fnmr": 0.6293
+    },
+    {
+      "min_blur": "100-1000000000.0",
+      "genuine_pairs": 35397,
+      "fnmr": 0.5327
+    }
+  ],
+  "face_stats": {
+    "face_px": {
+      "p10": 26.626,
+      "median": 36.468,
+      "p90": 50.769
+    },
+    "yaw": {
+      "p10": 0.141,
+      "median": 0.477,
+      "p90": 1.175
+    },
+    "pitch_dev": {
+      "p10": 0.006,
+      "median": 0.037,
+      "p90": 0.119
+    },
+    "blur": {
+      "p10": 61.226,
+      "median": 170.659,
+      "p90": 572.053
+    },
+    "brightness": {
+      "p10": 39.112,
+      "median": 85.316,
+      "p90": 126.794
+    },
+    "det_conf": {
+      "p10": 0.573,
+      "median": 0.743,
+      "p90": 0.79
+    }
+  },
+  "v11_decisions": {
+    "accepted": 3241,
+    "low_det_conf": 885,
+    "too_small": 337,
+    "pose": 8964,
+    "blurry": 15,
+    "illumination": 342
+  },
+  "pose_gate_sweep": [
+    {
+      "max_abs_yaw": 0.3,
+      "faces_accepted_pct": 29.1,
+      "genuine_pairs_kept": 7707,
+      "fnmr_kept": 0.6227
+    },
+    {
+      "max_abs_yaw": 0.45,
+      "faces_accepted_pct": 47.1,
+      "genuine_pairs_kept": 16835,
+      "fnmr_kept": 0.5984
+    },
+    {
+      "max_abs_yaw": 0.6,
+      "faces_accepted_pct": 62.5,
+      "genuine_pairs_kept": 25742,
+      "fnmr_kept": 0.5861
+    },
+    {
+      "max_abs_yaw": 0.75,
+      "faces_accepted_pct": 73.5,
+      "genuine_pairs_kept": 33028,
+      "fnmr_kept": 0.5665
+    },
+    {
+      "max_abs_yaw": 9,
+      "faces_accepted_pct": 99.8,
+      "genuine_pairs_kept": 54429,
+      "fnmr_kept": 0.5853
+    }
+  ],
+  "edc_real": {
+    "random": {
+      "pauc_0_30": 0.999,
+      "fnmr_0": 0.5855,
+      "fnmr_after_30pct": 0.5855
+    },
+    "heuristic (V1)": {
+      "pauc_0_30": 0.966,
+      "fnmr_0": 0.5855,
+      "fnmr_after_30pct": 0.5469
+    },
+    "eDifFIQA(T)": {
+      "pauc_0_30": 0.951,
+      "fnmr_0": 0.5855,
+      "fnmr_after_30pct": 0.5267
+    },
+    "blur only": {
+      "pauc_0_30": 0.95,
+      "fnmr_0": 0.5855,
+      "fnmr_after_30pct": 0.5376
+    },
+    "frontal-ness (-|yaw|)": {
+      "pauc_0_30": 0.991,
+      "fnmr_0": 0.5855,
+      "fnmr_after_30pct": 0.5767
+    },
+    "level head (-|pitch dev|)": {
+      "pauc_0_30": 0.947,
+      "fnmr_0": 0.5855,
+      "fnmr_after_30pct": 0.5221
+    },
+    "face size": {
+      "pauc_0_30": 0.996,
+      "fnmr_0": 0.5855,
+      "fnmr_after_30pct": 0.582
+    }
+  },
+  "config_search": {
+    "rule": "lowest tune-half FNMR with >=60% faces accepted, then reported on the unseen second half",
+    "split": "tune = minutes 12-35, test = minutes 35-58",
+    "configs_tried": 192,
+    "chosen": {
+      "max_abs_yaw": 0.75,
+      "max_pitch_dev": 0.2,
+      "min_blur": 50,
+      "min_face_px": 24,
+      "min_det_conf": 0.5
+    },
+    "tune_half": {
+      "no_gates": {
+        "faces_accepted_pct": 100.0,
+        "genuine_pairs": 14058,
+        "fnmr_kept": 0.592
+      },
+      "v1.1": {
+        "faces_accepted_pct": 21.6,
+        "genuine_pairs": 1117,
+        "fnmr_kept": 0.521
+      },
+      "chosen": {
+        "faces_accepted_pct": 60.5,
+        "genuine_pairs": 6053,
+        "fnmr_kept": 0.4976
+      }
+    },
+    "test_half": {
+      "no_gates": {
+        "faces_accepted_pct": 100.0,
+        "genuine_pairs": 21591,
+        "fnmr_kept": 0.5487
+      },
+      "v1.1": {
+        "faces_accepted_pct": 25.6,
+        "genuine_pairs": 2794,
+        "fnmr_kept": 0.5798
+      },
+      "chosen": {
+        "faces_accepted_pct": 64.1,
+        "genuine_pairs": 10765,
+        "fnmr_kept": 0.5132
+      }
+    }
+  },
+  "transfer_cctv_v2": {
+    "no_gates": {
+      "faces_accepted_pct": 100.0,
+      "genuine_pairs": 54588,
+      "fnmr_kept": 0.5855
+    },
+    "v1.1": {
+      "faces_accepted_pct": 23.5,
+      "genuine_pairs": 6039,
+      "fnmr_kept": 0.5804
+    },
+    "cctv_v2": {
+      "faces_accepted_pct": 32.5,
+      "genuine_pairs": 9415,
+      "fnmr_kept": 0.5233
+    }
+  }
+}
