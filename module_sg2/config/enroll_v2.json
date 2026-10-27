@@ -1,0 +1,30 @@
+{
+  "_note": "ENROLLMENT config (gallery photos for SG-3). Same as cctv_v2 but yaw 0.45->0.60 and pitch 0.10->0.15: EXP-6 showed recognition holds up to yaw ~0.6 and breaks after, and 3/4 views help because CCTV faces sit around yaw 0.28. Close-up portraits measure pitch more finely, so 0.10 was rejecting good front shots (EXP-7).",
+  "align": "similarity5",
+  "crop_margin": 0.0,
+  "output_size": 112,
+  "landmark_fallback": {
+    "method": "yunet_roi",
+    "model": "models/face_detection_yunet_2023mar.onnx",
+    "pad": 0.3,
+    "roi_size": 160,
+    "min_score": 0.3
+  },
+  "gates": {
+    "min_det_conf": 0.5,
+    "min_face_px": 24,
+    "max_abs_yaw": 0.6,
+    "max_pitch_dev": 0.15,
+    "min_blur": 75.0,
+    "brightness_range": [
+      20,
+      180
+    ],
+    "max_sat_frac": null
+  },
+  "quality_ref": {
+    "blur": 200.0,
+    "face_px": 80,
+    "yaw": 0.3
+  }
+}
