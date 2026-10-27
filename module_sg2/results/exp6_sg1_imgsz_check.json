@@ -1,0 +1,34 @@
+{
+  "frames_at_seconds": [
+    1200,
+    1800,
+    2700
+  ],
+  "cpu": "dev laptop",
+  "results": {
+    "1280": {
+      "faces_per_frame": [
+        41,
+        42,
+        41
+      ],
+      "ms_per_frame": 183
+    },
+    "1920": {
+      "faces_per_frame": [
+        41,
+        44,
+        42
+      ],
+      "ms_per_frame": 658
+    },
+    "2560": {
+      "faces_per_frame": [
+        40,
+        43,
+        40
+      ],
+      "ms_per_frame": 1928
+    }
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "data": "CR #28 CCTV 2560x1440, real SG-1 YOLOv12n-face (imgsz 1280) + SG-2 V1.1 fallback, SFace stand-in for SG-3; seat-consistency pseudo labels",
+  "faces_from_sg1": 22242,
+  "faces_aligned": 21771,
+  "no_landmarks": 471,
+  "frames": 552,
+  "genuine_pairs": 89981,
+  "impostor_pairs": 22080,
+  "threshold_fmr1": 0.4628,
+  "fnmr_all_faces": 0.479,
+  "eer_all_faces": 0.1816,
+  "fnmr_by_pair_max_yaw": [
+    {
+      "max_abs_yaw": "0-0.15",
+      "genuine_pairs": 5147,
+      "fnmr": 0.5815
+    },
+    {
+      "max_abs_yaw": "0.15-0.3",
+      "genuine_pairs": 27792,
+      "fnmr": 0.4546
+    },
+    {
+      "max_abs_yaw": "0.3-0.45",
+      "genuine_pairs": 28973,
+      "fnmr": 0.4235
+    },
+    {
+      "max_abs_yaw": "0.45-0.6",
+      "genuine_pairs": 13619,
+      "fnmr": 0.4646
+    },
+    {
+      "max_abs_yaw": "0.6-0.8",
+      "genuine_pairs": 7757,
+      "fnmr": 0.5463
+    },
+    {
+      "max_abs_yaw": "0.8-9",
+      "genuine_pairs": 6686,
+      "fnmr": 0.6931
+    }
+  ],
+  "fnmr_by_pair_min_face_px": [
+    {
+      "min_face_px": "0-16",
+      "genuine_pairs": 0,
+      "fnmr": null
+    },
+    {
+      "min_face_px": "16-20",
+      "genuine_pairs": 2,
+      "fnmr": null
+    },
+    {
+      "min_face_px": "20-24",
+      "genuine_pairs": 748,
+      "fnmr": 0.7674
+    },
+    {
+      "min_face_px": "24-28",
+      "genuine_pairs": 13935,
+      "fnmr": 0.5921
+    },
+    {
+      "min_face_px": "28-32",
+      "genuine_pairs": 27978,
+      "fnmr": 0.4789
+    },
+    {
+      "min_face_px": "32-40",
+      "genuine_pairs": 29377,
+      "fnmr": 0.4596
+    },
+    {
+      "min_face_px": "40-999",
+      "genuine_pairs": 17941,
+      "fnmr": 0.4112
+    }
+  ],
+  "fnmr_by_pair_max_pitch_dev": [
+    {
+      "max_pitch_dev": "0-0.1",
+      "genuine_pairs": 76189,
+      "fnmr": 0.439
+    },
+    {
+      "max_pitch_dev": "0.1-0.2",
+      "genuine_pairs": 12377,
+      "fnmr": 0.6845
+    },
+    {
+      "max_pitch_dev": "0.2-0.3",
+      "genuine_pairs": 1269,
+      "fnmr": 0.8243
+    },
+    {
+      "max_pitch_dev": "0.3-0.4",
+      "genuine_pairs": 107,
+      "fnmr": 0.9252
+    },
+    {
+      "max_pitch_dev": "0.4-9",
+      "genuine_pairs": 39,
+      "fnmr": 0.9231
+    }
+  ],
+  "fnmr_by_pair_min_blur": [
+    {
+      "min_blur": "0-10",
+      "genuine_pairs": 927,
+      "fnmr": 0.8706
+    },
+    {
+      "min_blur": "10-20",
+      "genuine_pairs": 1315,
+      "fnmr": 0.9042
+    },
+    {
+      "min_blur": "20-35",
+      "genuine_pairs": 2793,
+      "fnmr": 0.8285
+    },
+    {
+      "min_blur": "35-50",
+      "genuine_pairs": 3965,
+      "fnmr": 0.7483
+    },
+    {
+      "min_blur": "50-100",
+      "genuine_pairs": 21941,
+      "fnmr": 0.6033
+    },
+    {
+      "min_blur": "100-1000000000.0",
+      "genuine_pairs": 59040,
+      "fnmr": 0.3826
+    }
+  ],
+  "face_stats": {
+    "face_px": {
+      "p10": 27.752,
+      "median": 33.349,
+      "p90": 47.569
+    },
+    "yaw": {
+      "p10": 0.095,
+      "median": 0.278,
+      "p90": 0.616
+    },
+    "pitch_dev": {
+      "p10": 0.007,
+      "median": 0.035,
+      "p90": 0.1
+    },
+    "blur": {
+      "p10": 58.898,
+      "median": 162.405,
+      "p90": 414.614
+    },
+    "brightness": {
+      "p10": 47.95,
+      "median": 80.159,
+      "p90": 109.493
+    },
+    "det_conf": {
+      "p10": 0.591,
+      "median": 0.772,
+      "p90": 0.81
+    }
+  },
+  "v11_decisions": {
+    "accepted": 9930,
+    "low_det_conf": 1344,
+    "too_small": 71,
+    "pose": 9015,
+    "blurry": 63,
+    "illumination": 1348
+  },
+  "pose_gate_sweep": [
+    {
+      "max_abs_yaw": 0.3,
+      "faces_accepted_pct": 55.2,
+      "genuine_pairs_kept": 32939,
+      "fnmr_kept": 0.4565
+    },
+    {
+      "max_abs_yaw": 0.45,
+      "faces_accepted_pct": 79.8,
+      "genuine_pairs_kept": 61912,
+      "fnmr_kept": 0.434
+    },
+    {
+      "max_abs_yaw": 0.6,
+      "faces_accepted_pct": 89.4,
+      "genuine_pairs_kept": 75531,
+      "fnmr_kept": 0.4441
+    },
+    {
+      "max_abs_yaw": 0.75,
+      "faces_accepted_pct": 93.9,
+      "genuine_pairs_kept": 81903,
+      "fnmr_kept": 0.4546
+    },
+    {
+      "max_abs_yaw": 9,
+      "faces_accepted_pct": 100.0,
+      "genuine_pairs_kept": 89974,
+      "fnmr_kept": 0.479
+    }
+  ],
+  "edc_real": {
+    "random": {
+      "pauc_0_30": 0.998,
+      "fnmr_0": 0.479,
+      "fnmr_after_30pct": 0.4768
+    },
+    "heuristic (V1)": {
+      "pauc_0_30": 0.933,
+      "fnmr_0": 0.479,
+      "fnmr_after_30pct": 0.417
+    },
+    "eDifFIQA(T)": {
+      "pauc_0_30": 0.914,
+      "fnmr_0": 0.479,
+      "fnmr_after_30pct": 0.3913
+    },
+    "blur only": {
+      "pauc_0_30": 0.907,
+      "fnmr_0": 0.479,
+      "fnmr_after_30pct": 0.3945
+    },
+    "frontal-ness (-|yaw|)": {
+      "pauc_0_30": 0.957,
+      "fnmr_0": 0.479,
+      "fnmr_after_30pct": 0.451
+    },
+    "level head (-|pitch dev|)": {
+      "pauc_0_30": 0.928,
+      "fnmr_0": 0.479,
+      "fnmr_after_30pct": 0.4173
+    },
+    "face size": {
+      "pauc_0_30": 0.962,
+      "fnmr_0": 0.479,
+      "fnmr_after_30pct": 0.4523
+    }
+  },
+  "config_search": {
+    "rule": "lowest tune-half FNMR with >=60% faces accepted, then reported on the unseen second half",
+    "split": "tune = minutes 12-35, test = minutes 35-58",
+    "configs_tried": 192,
+    "chosen": {
+      "max_abs_yaw": 0.45,
+      "max_pitch_dev": 0.1,
+      "min_blur": 75,
+      "min_face_px": 24,
+      "min_det_conf": 0.5
+    },
+    "tune_half": {
+      "no_gates": {
+        "faces_accepted_pct": 100.0,
+        "genuine_pairs": 17696,
+        "fnmr_kept": 0.4618
+      },
+      "v1.1": {
+        "faces_accepted_pct": 45.0,
+        "genuine_pairs": 4661,
+        "fnmr_kept": 0.398
+      },
+      "chosen": {
+        "faces_accepted_pct": 61.3,
+        "genuine_pairs": 8222,
+        "fnmr_kept": 0.3083
+      }
+    },
+    "test_half": {
+      "no_gates": {
+        "faces_accepted_pct": 100.0,
+        "genuine_pairs": 41763,
+        "fnmr_kept": 0.4623
+      },
+      "v1.1": {
+        "faces_accepted_pct": 46.4,
+        "genuine_pairs": 11624,
+        "fnmr_kept": 0.4069
+      },
+      "chosen": {
+        "faces_accepted_pct": 62.7,
+        "genuine_pairs": 20177,
+        "fnmr_kept": 0.3384
+      }
+    }
+  }
+}
