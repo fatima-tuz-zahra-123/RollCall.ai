@@ -1,5 +1,24 @@
 # generated outputs (pipeline runs, Ultralytics predictions) - regenerate, never commit
 runs/
-__pycache__/
-*.pyc
 .venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# private class data (faces) - never in this public repo
+private_data/
+private_runs/
+module_sg3/data/
+module_sg3/gallery/
+module_sg3/gallery_class*/
+module_sg3/gallery*.backup*/
+module_sg3/.gallery*.staging-*/
+module_sg3/models/*.onnx
+module_sg3/models/*.part
+module_sg3/private_data/
+module_sg3/private_runs/
+*.mp4
+*.avi
+*.HEIC
+*.heic
+*.npz
+# Sanitized aggregate reports under module_sg3/results may be committed after review.
