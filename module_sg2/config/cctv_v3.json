@@ -1,0 +1,30 @@
+{
+  "_note": "CCTV config for BOTH classrooms (CR #28 + CR #29), picked in EXP-6b on the first half of both lectures and checked on the second halves: CR28 73.2% of faces / FNMR 34.7%, CR29 54.6% / 47.3% (V1.1: 46.4% / 40.7% and 25.6% / 58.0%). Same as cctv_v2 except yaw 0.45 -> 0.75: in CR #29 the camera sees students more side-on and yaw didn't predict failure, so the tighter limit only threw faces away. Pitch 0.10 and blur 75 held up in both rooms. Saturation gate off. Same landmark fallback.",
+  "align": "similarity5",
+  "crop_margin": 0.0,
+  "output_size": 112,
+  "landmark_fallback": {
+    "method": "yunet_roi",
+    "model": "models/face_detection_yunet_2023mar.onnx",
+    "pad": 0.3,
+    "roi_size": 160,
+    "min_score": 0.3
+  },
+  "gates": {
+    "min_det_conf": 0.5,
+    "min_face_px": 24,
+    "max_abs_yaw": 0.75,
+    "max_pitch_dev": 0.1,
+    "min_blur": 75.0,
+    "brightness_range": [
+      20,
+      180
+    ],
+    "max_sat_frac": null
+  },
+  "quality_ref": {
+    "blur": 200.0,
+    "face_px": 80,
+    "yaw": 0.3
+  }
+}

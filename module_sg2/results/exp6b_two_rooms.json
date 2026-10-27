@@ -1,0 +1,63 @@
+{
+  "rule": "lowest worst-room FNMR on first halves, >= 50% faces kept in each room; reported on second halves",
+  "configs_tried": 40,
+  "chosen": {
+    "max_abs_yaw": 0.75,
+    "max_pitch_dev": 0.1,
+    "min_blur": 75,
+    "min_face_px": 24,
+    "min_det_conf": 0.5
+  },
+  "tune_first_halves": {
+    "CR28": {
+      "faces_pct": 71.5,
+      "fnmr": 0.3335
+    },
+    "CR29": {
+      "faces_pct": 50.8,
+      "fnmr": 0.4539
+    }
+  },
+  "test_second_halves": {
+    "no_gates": {
+      "CR28": {
+        "faces_pct": 100.0,
+        "fnmr": 0.4623
+      },
+      "CR29": {
+        "faces_pct": 100.0,
+        "fnmr": 0.5487
+      }
+    },
+    "cctv_v2 (CR28 only)": {
+      "CR28": {
+        "faces_pct": 62.7,
+        "fnmr": 0.3384
+      },
+      "CR29": {
+        "faces_pct": 33.9,
+        "fnmr": 0.5446
+      }
+    },
+    "chosen (both rooms)": {
+      "CR28": {
+        "faces_pct": 73.2,
+        "fnmr": 0.347
+      },
+      "CR29": {
+        "faces_pct": 54.6,
+        "fnmr": 0.4731
+      }
+    },
+    "v1.1": {
+      "CR28": {
+        "faces_pct": 46.4,
+        "fnmr": 0.4069
+      },
+      "CR29": {
+        "faces_pct": 25.6,
+        "fnmr": 0.5798
+      }
+    }
+  }
+}
