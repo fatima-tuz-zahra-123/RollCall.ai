@@ -86,7 +86,7 @@ SG-3 (SFace) takes only **accepted** faces. Two equivalent forms:
 - `faces: []` → `results: []`.
 - All faces rejected → results present, every `accept:false`.
 - Thresholds live in a versioned config file (`module_sg2/config/*.json`), not in code.
-- Week 8: `cctv_v2.json` is the config for the classroom camera (tuned on the 8 Oct lecture, EXP-6) and `enroll_v2.json` is for SG-3's gallery photos (EXP-7). Gallery and video faces must both go through SG-2 so they're aligned the same way.
+- Week 8: `cctv_v3.json` is the config for the classroom cameras (tuned on the CR #28 and CR #29 lectures, EXP-6/6b; `cctv_v2.json` = CR #28 only) and `enroll_v2.json` is for SG-3's gallery photos (EXP-7). Gallery and video faces must both go through SG-2 so they're aligned the same way.
 - A new gate `max_pitch_dev` (head tilted down/up) reuses the existing `pose` reason code, so no new reason values.
 
 ## Open points to agree with neighbours

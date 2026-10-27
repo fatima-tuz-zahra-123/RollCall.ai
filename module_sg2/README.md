@@ -224,7 +224,26 @@ We added a pitch measure (`pitch_proxy()`: where the nose sits between the eye l
 | V1.1 (`sg1_yolov12_v1.json`) | 46.4% | 40.7% |
 | **`cctv_v2.json`** (yaw 0.45, pitch 0.10, blur 75) | **62.7%** | **33.8%** |
 
-More faces *and* fewer mistakes. `cctv_v2.json` is now the default in `integration/sg1_sg2_pipeline.py`. On 56 frames (one per minute) the real pipeline accepts 57.1% vs 43.8% before, at ~2.8 ms per face.
+More faces *and* fewer mistakes. On 56 frames (one per minute) the real pipeline accepts 57.1% vs 43.8% before, at ~2.8 ms per face.
+
+### EXP-6 on a second room: our own class, CR #29 (6 Oct), and EXP-6b
+Same run on the CR #29 recording (different camera angle, brighter, students seen more side-on: median yaw 0.48 vs 0.28). 552 frames, 14,147 faces, 54,588 same-person / 22,080 different-person pairs. Every frame is new to the config.
+
+- **Pitch and blur behaved the same as in CR #28:** pitch dev <0.1: 54% FNMR, 0.1–0.2: 76%, 0.2–0.3: 82%. Blur <50: 80–90%, >100: 53%. So those two gates carry over.
+- **Yaw didn't predict failure at all here** (55–60% FNMR in every bin), so `cctv_v2`'s 0.45 limit just threw faces away: on CR #29 it kept only 32.5% of faces (still better than V1.1's 23.5%, with fewer misses: 52.3% vs 58.0%).
+
+The Face-Off might be in yet another room, so we picked one config on the **first half of both** lectures and checked it on the **second half of both** (`experiments/exp6b_two_rooms.py`):
+
+| second halves | CR #28 faces / FNMR | CR #29 faces / FNMR |
+|---|---|---|
+| no gates | 100% / 46.2% | 100% / 54.9% |
+| V1.1 (`sg1_yolov12_v1.json`) | 46.4% / 40.7% | 25.6% / 58.0% |
+| `cctv_v2` (CR #28 only) | 62.7% / 33.8% | 33.9% / 54.5% |
+| **`cctv_v3`** (both rooms) | **73.2% / 34.7%** | **54.6% / 47.3%** |
+
+`cctv_v3` = `cctv_v2` with yaw 0.45 → 0.75 (pitch 0.10, blur 75 unchanged). It's now the default in `integration/sg1_sg2_pipeline.py`. The real pipeline on one frame per minute accepts **69.1%** of faces in CR #28 (V1.1: 43.8%) and **52.2%** in CR #29 (V1.1: 21.6%), ~2.8 ms per face.
+
+CR #29 is harder overall (58.6% FNMR with no gates vs 47.9%): faces are more side-on to the camera. Camera placement matters as much as our thresholds, worth telling SG-6 for the Face-Off setup.
 
 Honest part: even with good gates, SFace misses about a third of same-person pairs on 33 px CCTV faces at FMR 1%. That's CCTV-vs-CCTV though; SG-3 will match against high-res enrollment photos, and SG-4/SG-5 combine many frames per student, so per-frame misses don't mean missed attendance. Quality scores help only a little here (EDC pAUC: eDifFIQA 0.91, blur 0.91, heuristic 0.93, random 1.0).
 
@@ -241,16 +260,18 @@ The left/right/top shots are near-profiles (yaw 0.5–1.3) and EXP-6 shows recog
 
 ### Running it
 ```bash
-python integration/sg1_sg2_pipeline.py --source path/to/frames_or_video     # uses cctv_v2.json now
+python integration/sg1_sg2_pipeline.py --source path/to/frames_or_video     # uses cctv_v3.json now
 python module_sg2/experiments/exp6_classroom_cctv.py --video "path/to/CR # 28 ... .mp4"   # ~20 min CPU
 python module_sg2/experiments/exp6_classroom_cctv.py --analyse-only                        # re-use cached faces
+python module_sg2/experiments/exp6_classroom_cctv.py --video "path/to/CR # 29 ... .mp4" --tag cr29
+python module_sg2/experiments/exp6b_two_rooms.py                                           # needs both caches
 python module_sg2/experiments/exp7_enrollment_gallery.py --dataset "path/to/Class Dataset" --config enroll_v2.json
 python module_sg2/scripts/bench_sg2.py           # SG-2 timing on this machine (for the Jetson)
 ```
 Needs `pip install ultralytics==8.4.173 pillow-heif` on top of our normal deps. Our review of SG-1 is in [`docs/sg1_review.md`](docs/sg1_review.md).
 
 ## Current limitations
-- EXP-1 to EXP-5 are on LFW (web photos, ~93 px faces). EXP-6/7 are on the real class data, but only one lecture from one camera; another room or lighting may need its own thresholds.
+- EXP-1 to EXP-5 are on LFW (web photos, ~93 px faces). EXP-6/6b/7 are on real class data: two lectures in two rooms. A third room or very different lighting could still shift the thresholds (yaw especially).
 - EXP-6 labels come from seats, not from names, so it measures CCTV-vs-CCTV matching, not gallery-vs-CCTV.
 - EXP-2/3 use oracle detection (landmarks from the clean image). EXP-4 removes this and shows real detection on degraded images is worse.
 - Darkening is simulated without sensor noise, so real low light will be harder than EXP-2 suggests.
