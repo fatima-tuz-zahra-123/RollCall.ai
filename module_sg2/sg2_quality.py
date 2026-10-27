@@ -93,6 +93,17 @@ def roi_landmarks(frame, box, lf):
     return lmk.astype(float).tolist(), float(faces[i, 14])
 
 
+def pitch_proxy(lmk):
+    """Where the nose sits between the eye line and the mouth line, measured perpendicular to the eyes.
+    ArcFace template = 0.49 (frontal). Head tilted down (seen from a high camera) pushes the nose towards
+    the mouth line, so the value goes up; tilted back it goes down. Roll-invariant like yaw_proxy."""
+    lmk = np.float32(lmk)
+    e = lmk[1] - lmk[0]
+    n = np.float32([-e[1], e[0]]) / (np.linalg.norm(e) + 1e-6)   # unit normal to the eye line
+    eye_mid, mouth_mid = (lmk[0] + lmk[1]) / 2, (lmk[3] + lmk[4]) / 2
+    return float(np.dot(lmk[2] - eye_mid, n) / (np.dot(mouth_mid - eye_mid, n) + 1e-6))
+
+
 def yaw_proxy(lmk):
     """Nose offset from the eye midpoint, measured ALONG the eye axis, / eye distance.
     ~0 frontal, grows as the head turns; sign = direction. Along-axis makes it roll-invariant
@@ -136,7 +147,7 @@ def assess_face(frame, face, cfg):
     m["face_px"] = float(min(box[2], box[3]))
     m["det_conf"] = float(face.get("det_conf", 1.0))
     m["lmk_source"] = "sg1" if lmk is not None else None
-    m["yaw"] = None
+    m["yaw"] = m["pitch"] = None
 
     def reject(reason):
         r["reason"] = reason
@@ -152,10 +163,13 @@ def assess_face(frame, face, cfg):
         if lmk is not None:
             m["lmk_source"] = cfg["landmark_fallback"].get("method", "yunet_roi")
     if lmk is not None:
-        m["yaw"] = yaw_proxy(lmk)
+        m["yaw"], m["pitch"] = yaw_proxy(lmk), pitch_proxy(lmk)
     if cfg["align"] == "similarity5" and lmk is None:
         return reject("no_landmarks")
     if g.get("max_abs_yaw") is not None and m["yaw"] is not None and abs(m["yaw"]) > g["max_abs_yaw"]:
+        return reject("pose")
+    # head tilted down/up: on the CCTV this hurt recognition more than turning sideways (EXP-6)
+    if g.get("max_pitch_dev") is not None and m["pitch"] is not None and abs(m["pitch"] - 0.495) > g["max_pitch_dev"]:
         return reject("pose")
     size = cfg["output_size"]
     out = align(frame, lmk, size) if cfg["align"] == "similarity5" else _crop_resize(frame, box, cfg["crop_margin"], size)
