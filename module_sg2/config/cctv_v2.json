@@ -1,0 +1,30 @@
+{
+  "_note": "CCTV config (classroom camera CR #28 + real SG-1 YOLOv12n-face). Gates picked in EXP-6 on the first half of the 8 Oct lecture and checked on the second half: vs sg1_yolov12_v1 it passes 62.7% of faces instead of 46.4% and missed matches drop 40.7% -> 33.8% (SFace, FMR 1%). Changes: yaw 0.30->0.45, new pitch gate 0.1, blur 20->75. Same landmark fallback as sg1_yolov12_v1. max_sat_frac off: on this camera it mostly flagged dark hair (11% of faces) for no FNMR gain.",
+  "align": "similarity5",
+  "crop_margin": 0.0,
+  "output_size": 112,
+  "landmark_fallback": {
+    "method": "yunet_roi",
+    "model": "models/face_detection_yunet_2023mar.onnx",
+    "pad": 0.3,
+    "roi_size": 160,
+    "min_score": 0.3
+  },
+  "gates": {
+    "min_det_conf": 0.5,
+    "min_face_px": 24,
+    "max_abs_yaw": 0.45,
+    "max_pitch_dev": 0.1,
+    "min_blur": 75.0,
+    "brightness_range": [
+      20,
+      180
+    ],
+    "max_sat_frac": null
+  },
+  "quality_ref": {
+    "blur": 200.0,
+    "face_px": 80,
+    "yaw": 0.3
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "data": "Class Dataset enrollment HEIC photos, real SG-1 (YOLOv12n-face) + SG-2 cctv_v2.json",
+  "per_view": {
+    "unnamed": {
+      "shots": 12,
+      "accepted": 2,
+      "reasons": {
+        "pose": 10
+      }
+    },
+    "left": {
+      "shots": 7,
+      "accepted": 0,
+      "reasons": {
+        "pose": 7
+      }
+    },
+    "right": {
+      "shots": 6,
+      "accepted": 1,
+      "reasons": {
+        "pose": 5
+      }
+    },
+    "front": {
+      "shots": 6,
+      "accepted": 4,
+      "reasons": {
+        "pose": 2
+      }
+    },
+    "top": {
+      "shots": 4,
+      "accepted": 0,
+      "reasons": {
+        "pose": 4
+      }
+    }
+  },
+  "people": 15,
+  "people_with_no_usable_shot": 10,
+  "per_person": [
+    {
+      "person": "person_1",
+      "shots": 3,
+      "accepted": 0
+    },
+    {
+      "person": "person_2",
+      "shots": 2,
+      "accepted": 1
+    },
+    {
+      "person": "person_3",
+      "shots": 4,
+      "accepted": 0
+    },
+    {
+      "person": "person_4",
+      "shots": 1,
+      "accepted": 0
+    },
+    {
+      "person": "person_5",
+      "shots": 1,
+      "accepted": 1
+    },
+    {
+      "person": "person_6",
+      "shots": 3,
+      "accepted": 0
+    },
+    {
+      "person": "person_7",
+      "shots": 2,
+      "accepted": 0
+    },
+    {
+      "person": "person_8",
+      "shots": 5,
+      "accepted": 3
+    },
+    {
+      "person": "person_9",
+      "shots": 2,
+      "accepted": 0
+    },
+    {
+      "person": "person_10",
+      "shots": 2,
+      "accepted": 1
+    },
+    {
+      "person": "person_11",
+      "shots": 1,
+      "accepted": 0
+    },
+    {
+      "person": "person_12",
+      "shots": 2,
+      "accepted": 0
+    },
+    {
+      "person": "person_13",
+      "shots": 3,
+      "accepted": 0
+    },
+    {
+      "person": "person_14",
+      "shots": 2,
+      "accepted": 1
+    },
+    {
+      "person": "person_15",
+      "shots": 2,
+      "accepted": 0
+    }
+  ]
+}

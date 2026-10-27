@@ -1,7 +1,10 @@
+# generated outputs (pipeline runs, Ultralytics predictions) - regenerate, never commit
+runs/
 .venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+# private class data (faces) - never in this public repo
 private_data/
 private_runs/
 module_sg3/data/

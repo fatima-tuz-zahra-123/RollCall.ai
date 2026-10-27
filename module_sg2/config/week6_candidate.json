@@ -1,15 +1,29 @@
 {
-  "_note": "Week-6 CANDIDATE, derived from EXP-2 threshold sweeps (results/exp2_thresholds.json) and checked end-to-end in EXP-4. Changes vs baseline_v1: min_blur 50->20, min_face_px 40->24, brightness 50-220 -> 20-180. Alignment, pose 0.30, det-conf, saturation unchanged.",
+  "_note": "Week-6 CANDIDATE, derived from EXP-2 threshold sweeps (results/exp2_thresholds.json) and checked end-to-end in EXP-4. Changes vs baseline_v1: min_blur 50->20, min_face_px 40->24, brightness 50-220 -> 20-180. Alignment, pose 0.30, det-conf, saturation unchanged. landmark_fallback: if SG-1 sends no landmarks (YOLOv12n-face), SG-2 finds them with YuNet on the box ROI (roi_landmarks, same settings as sg1_yolov12_v1.json, EXP-5).",
   "align": "similarity5",
   "crop_margin": 0.0,
   "output_size": 112,
   "gates": {
     "min_det_conf": 0.5,
     "min_face_px": 24,
-    "max_abs_yaw": 0.30,
+    "max_abs_yaw": 0.3,
     "min_blur": 20.0,
-    "brightness_range": [20, 180],
-    "max_sat_frac": 0.30
+    "brightness_range": [
+      20,
+      180
+    ],
+    "max_sat_frac": 0.3
   },
-  "quality_ref": {"blur": 200.0, "face_px": 80, "yaw": 0.30}
+  "quality_ref": {
+    "blur": 200.0,
+    "face_px": 80,
+    "yaw": 0.3
+  },
+  "landmark_fallback": {
+    "method": "yunet_roi",
+    "model": "models/face_detection_yunet_2023mar.onnx",
+    "pad": 0.3,
+    "roi_size": 160,
+    "min_score": 0.3
+  }
 }
