@@ -12,6 +12,8 @@ measure where recognition breaks as a function of pose, face size and blur, on t
 
     python module_sg2/experiments/exp6_classroom_cctv.py --video "path/to/CR # 28 ... .mp4"
     python module_sg2/experiments/exp6_classroom_cctv.py --analyse-only     # reuse the cached faces
+    # another room: --tag keeps its cache/results separate, and "transfer" checks the CR #28 config on it
+    python module_sg2/experiments/exp6_classroom_cctv.py --video "path/to/CR # 29 ... .mp4" --tag cr29
 
 Only numbers are saved to results/ (the repo is public, so no classmate faces get committed).
 """
@@ -24,6 +26,7 @@ from exp3_edc import EDifFIQA
 
 sys.path.insert(0, str(SG2.parent / "integration"))
 CACHE = DATA / "exp6_faces.npz"
+TAG = ""
 
 
 def collect(video, start_s, end_s, step_s):
@@ -154,6 +157,22 @@ def imgsz_check(video, times=(1200, 1800, 2700)):
     save("exp6_sg1_imgsz_check", {"frames_at_seconds": list(times), "cpu": "dev laptop", "results": out})
 
 
+def transfer(R, pairs, lab, s):
+    """cctv_v2's gates (picked on CR #28) applied as-is to the whole video, no re-tuning."""
+    g = sg2_quality.load_config(SG2 / "config" / "cctv_v2.json")["gates"]
+    lo, hi = g["brightness_range"]
+    m = ((np.abs(R["yaw"]) <= g["max_abs_yaw"]) & (R["pitch_dev"] <= g["max_pitch_dev"]) & (R["blur"] >= g["min_blur"])
+         & (R["face_px"] >= g["min_face_px"]) & (R["det_conf"] >= g["min_det_conf"])
+         & (R["brightness"] >= lo) & (R["brightness"] <= hi))
+    out = {}
+    for name, mask in [("no_gates", np.ones(len(m), bool)), ("v1.1", R["accept_v11"] > 0.5), ("cctv_v2", m)]:
+        keep = mask[pairs[:, 0]] & mask[pairs[:, 1]]
+        t = threshold_at_fmr(s[keep], lab[keep])
+        out[name] = {"faces_accepted_pct": round(100 * mask.mean(), 1), "genuine_pairs": int((keep & lab).sum()),
+                     "fnmr_kept": round(fnmr_at(s[keep], lab[keep], t), 4)}
+    return out
+
+
 def analyse():
     z = np.load(CACHE)
     R = {c: z["rows"][:, k] for k, c in enumerate(COLS)}
@@ -227,8 +246,9 @@ def analyse():
                      "fnmr_0": round(float(ys[0]), 4), "fnmr_after_30pct": round(float(ys[-1]), 4)}
     out["edc_real"] = edc
     out["config_search"] = config_search(R, pairs, lab, s)
+    out["transfer_cctv_v2"] = transfer(R, pairs, lab, s)
     print(json.dumps(out, indent=1))
-    save("exp6_classroom_cctv", out)
+    save("exp6_classroom_cctv" + (f"_{TAG}" if TAG else ""), out)
     return R, E, gen, imp
 
 
@@ -240,7 +260,10 @@ if __name__ == "__main__":
     ap.add_argument("--step", type=int, default=5, help="one frame every N seconds")
     ap.add_argument("--analyse-only", action="store_true")
     ap.add_argument("--imgsz-check", action="store_true", help="only compare SG-1 inference sizes")
+    ap.add_argument("--tag", default="", help="name for another video's cache/results, e.g. cr29")
     a = ap.parse_args()
+    if a.tag:
+        TAG, CACHE = a.tag, DATA / f"exp6_faces_{a.tag}.npz"
     if a.imgsz_check:
         imgsz_check(a.video)
         sys.exit()

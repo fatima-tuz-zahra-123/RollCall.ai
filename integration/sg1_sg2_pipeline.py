@@ -114,7 +114,7 @@ def main():
     ap.add_argument("--sg1-conf", type=float, default=0.25, help="SG-1 detection threshold (run.py default)")
     ap.add_argument("--imgsz", type=int, default=1280, help="SG-1 inference size (run.py predict default)")
     ap.add_argument("--device", default=None)
-    ap.add_argument("--config", default=str(REPO / "module_sg2" / "config" / "cctv_v2.json"))  # tuned on the class video (EXP-6)
+    ap.add_argument("--config", default=str(REPO / "module_sg2" / "config" / "cctv_v3.json"))  # tuned on both class videos (EXP-6/6b)
     ap.add_argument("--out", default=str(REPO / "runs" / "sg1_sg2"))
     ap.add_argument("--every", type=int, default=1, help="video: process every Nth frame")
     ap.add_argument("--max-frames", type=int, default=None)
