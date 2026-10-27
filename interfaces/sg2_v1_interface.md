@@ -50,7 +50,7 @@ One result **per input face, same order** (`face_index` = position in `faces`).
      "accept": true,
      "reason": null,
      "quality": 0.81,
-     "metrics": {"face_px": 92.8, "det_conf": 0.93, "lmk_source": "sg1", "yaw": 0.04, "blur": 412.0, "brightness": 118.3, "sat_frac": 0.01},
+     "metrics": {"face_px": 92.8, "det_conf": 0.93, "lmk_source": "sg1", "yaw": 0.04, "pitch": 0.51, "blur": 412.0, "brightness": 118.3, "sat_frac": 0.01},
      "face": "<112x112x3 uint8 BGR, aligned>"}
   ]
 }
@@ -60,7 +60,7 @@ One result **per input face, same order** (`face_index` = position in `faces`).
 | `accept` | `true` → send `face` to SG-3. `false` → do **not** recognise this face in this frame |
 | `reason` | `null` if accepted, else one of: `bad_input`, `low_det_conf`, `too_small`, `no_landmarks`, `pose`, `align_failed`, `blurry`, `illumination` |
 | `quality` | soft score 0–1 (higher = better). SG-4 can keep the best-quality crop per track; SG-5 can weight evidence |
-| `metrics` | raw measurements behind the decision (for debugging + failure analysis) |
+| `metrics` | raw measurements behind the decision (for debugging + failure analysis). `pitch` (Week 8) = nose position between eye line and mouth line, 0.495 = level head |
 | `face` | **112×112×3, uint8, BGR, aligned** to the ArcFace 5-point template (eyes at ≈(38,52) and (74,52)); `null` when rejected. **No mean/std normalisation is applied** — SG-3 applies its model's own normalisation (e.g. SFace takes this image directly; ArcFace-ONNX models expect `(x−127.5)/127.5`, RGB). |
 
 ### SG-3 handoff (agreed with SG-3, Week 8): NumPy arrays
@@ -86,6 +86,8 @@ SG-3 (SFace) takes only **accepted** faces. Two equivalent forms:
 - `faces: []` → `results: []`.
 - All faces rejected → results present, every `accept:false`.
 - Thresholds live in a versioned config file (`module_sg2/config/*.json`), not in code.
+- Week 8: `cctv_v2.json` is the config for the classroom camera (tuned on the 8 Oct lecture, EXP-6) and `enroll_v2.json` is for SG-3's gallery photos (EXP-7). Gallery and video faces must both go through SG-2 so they're aligned the same way.
+- A new gate `max_pitch_dev` (head tilted down/up) reuses the existing `pose` reason code, so no new reason values.
 
 ## Open points to agree with neighbours
 1. SG-1: ~~landmarks in output~~ resolved by V1.1 (SG-2 fallback); still open: confidence calibration (YOLO `conf` ≠ YuNet score, so `min_det_conf` 0.5 needs re-tuning on classroom data), minimum face size they can detect, and SG-1 emitting V1 directly (move `sg1_adapter.py` into `module_sg1/`).

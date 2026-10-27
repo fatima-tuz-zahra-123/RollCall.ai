@@ -192,8 +192,66 @@ Outputs go to `runs/sg1_sg2/`: `annotated/` (green = accepted + quality, red = r
 
 **Finding (blur gate is size-biased):** the 38 `blurry` rejects on the class photo look as sharp as the accepted faces. They are only slightly smaller (median 33 vs 36 px). Laplacian variance is measured after upscaling to 112 px, which smooths small faces: corr(face_px, blur) = +0.58 on this image. `min_blur = 20` came from LFW (~93 px faces) and does not transfer to back-row faces. Measuring blur at native resolution over-corrects (corr −0.53 on the 19 accepted faces), so it is not a drop-in fix. → Week-9 experiment: blur × face-size grid on the EXP-2 bench, then a size-aware blur threshold.
 
+## Week-8: real class data (CCTV video + enrollment photos)
+
+Data: the CR #28 ceiling camera recording of the 8 Oct lecture (2560×1440, 70 min) and the enrollment photos (`Class Dataset/<name>/*.HEIC`, iPhone, front/left/right/top). The data is **not** in the repo (it's classmates' faces and the repo is public); ask the team for the Drive folder. Results below are numbers only.
+
+### EXP-6: the real SG-1 → SG-2 → SFace on the lecture (`experiments/exp6_classroom_cctv.py`)
+552 frames (minutes 12–58, one every 5 s), SG-1's real YOLOv12n-face at imgsz 1280, our landmark fallback, SFace as SG-3 stand-in.
+
+Nobody labelled who sits where, so we used the seats as labels: **same seat ≥ 60 s apart = same person, different seats in the same frame = different people**. Students don't swap seats mid-lecture, and we checked a sheet of pairs by eye (including the lowest-scoring "same person" pairs: they really are the same person, just looking down or with a hand on the face). That gave 89,981 same-person and 22,080 different-person pairs from real footage.
+
+What the camera gives us: 22,242 faces, median **33 px** wide, median yaw 0.28. Fallback found landmarks for 97.9%.
+
+Where recognition actually breaks (FNMR at FMR 1%, pair-level):
+
+| | | | | |
+|---|---|---|---|---|
+| yaw (turned) | 0–0.15: 58%* / 0.15–0.3: 45% | 0.3–0.45: 42% | 0.45–0.6: 46% | 0.6–0.8: 55%, >0.8: 69% |
+| pitch dev (head down/up, new) | <0.1: 44% | 0.1–0.2: 68% | 0.2–0.3: 82% | >0.3: 92% |
+| blur | <50: 75–90% | 50–100: 60% | >100: 38% | |
+| face size | 20–24 px: 77% | 24–28: 59% | 28–40: 46–48% | >40: 41% |
+
+*The near-frontal bin looks worse because 20% of those faces are heads bent over the desk (vs 5–9% in the other bins): looking down lines the nose up between the eyes, so yaw reads ~0 even though the face is bad. That's what the pitch gate below catches.
+
+So on this camera: turning the head barely matters until ~0.6 (our 0.30 limit was throwing away faces for nothing), **looking down matters a lot** (we had no check for it), and blur matters much more than on LFW (our LFW-tuned 20 was too loose).
+
+We added a pitch measure (`pitch_proxy()`: where the nose sits between the eye line and the mouth line, 0.495 = frontal) and picked new thresholds **on the first half of the lecture only**, then checked them on the second half, which they never saw:
+
+| second half (min 35–58) | faces sent to SG-3 | FNMR @ FMR 1% |
+|---|---|---|
+| no gates | 100% | 46.2% |
+| V1.1 (`sg1_yolov12_v1.json`) | 46.4% | 40.7% |
+| **`cctv_v2.json`** (yaw 0.45, pitch 0.10, blur 75) | **62.7%** | **33.8%** |
+
+More faces *and* fewer mistakes. `cctv_v2.json` is now the default in `integration/sg1_sg2_pipeline.py`. On 56 frames (one per minute) the real pipeline accepts 57.1% vs 43.8% before, at ~2.8 ms per face.
+
+Honest part: even with good gates, SFace misses about a third of same-person pairs on 33 px CCTV faces at FMR 1%. That's CCTV-vs-CCTV though; SG-3 will match against high-res enrollment photos, and SG-4/SG-5 combine many frames per student, so per-frame misses don't mean missed attendance. Quality scores help only a little here (EDC pAUC: eDifFIQA 0.91, blur 0.91, heuristic 0.93, random 1.0).
+
+### EXP-7: enrollment photos (`experiments/exp7_enrollment_gallery.py`)
+SG-3's gallery must go through the **same** SG-2 alignment as the video faces. Pushing all 35 shots through SG-1 → SG-2:
+
+| config | shots accepted | people with no usable shot (of 15) |
+|---|---|---|
+| `sg1_yolov12_v1.json` | 7 / 35 | 8 |
+| `cctv_v2.json` | 7 / 35 | 10 |
+| **`enroll_v2.json`** (yaw 0.60, pitch 0.15) | **16 / 35** | **4** |
+
+The left/right/top shots are near-profiles (yaw 0.5–1.3) and EXP-6 shows recognition falls apart past ~0.6, so most of them can't be used no matter what. **4 people only have profile shots and need one front photo retaken.** The 17 unsorted `IMG_xxxx` photos in the dataset root also need to go into name folders.
+
+### Running it
+```bash
+python integration/sg1_sg2_pipeline.py --source path/to/frames_or_video     # uses cctv_v2.json now
+python module_sg2/experiments/exp6_classroom_cctv.py --video "path/to/CR # 28 ... .mp4"   # ~20 min CPU
+python module_sg2/experiments/exp6_classroom_cctv.py --analyse-only                        # re-use cached faces
+python module_sg2/experiments/exp7_enrollment_gallery.py --dataset "path/to/Class Dataset" --config enroll_v2.json
+python module_sg2/scripts/bench_sg2.py           # SG-2 timing on this machine (for the Jetson)
+```
+Needs `pip install ultralytics==8.4.173 pillow-heif` on top of our normal deps. Our review of SG-1 is in [`docs/sg1_review.md`](docs/sg1_review.md).
+
 ## Current limitations
-- LFW faces are web photos: large (median 93 px), mostly sharp and frontal. Classroom problems are **simulated** (EXP-2/3), not yet measured on real classroom video.
+- EXP-1 to EXP-5 are on LFW (web photos, ~93 px faces). EXP-6/7 are on the real class data, but only one lecture from one camera; another room or lighting may need its own thresholds.
+- EXP-6 labels come from seats, not from names, so it measures CCTV-vs-CCTV matching, not gallery-vs-CCTV.
 - EXP-2/3 use oracle detection (landmarks from the clean image). EXP-4 removes this and shows real detection on degraded images is worse.
 - Darkening is simulated without sensor noise, so real low light will be harder than EXP-2 suggests.
 - The baseline heuristic quality score ranks faces poorly (EXP-3); it is replaced by eDifFIQA(T) for Week 6.
